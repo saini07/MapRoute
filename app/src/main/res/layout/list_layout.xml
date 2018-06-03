@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="5dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:text="FROM  : "
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
+
+    <TextView
+        android:id="@+id/from_lay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/textView5"
+        android:layout_marginStart="124dp"
+        android:layout_marginLeft="12dp"
+        android:text="origin"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
+
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/textView5"
+        android:layout_alignLeft="@id/textView5"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="48dp"
+        android:text="TO : "
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"/>
+
+    <TextView
+        android:id="@+id/to_lay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/from_lay"
+        android:layout_alignLeft="@+id/from_lay"
+        android:layout_alignTop="@+id/textView7"
+        android:text="Destination"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"/>
+
+</RelativeLayout>
