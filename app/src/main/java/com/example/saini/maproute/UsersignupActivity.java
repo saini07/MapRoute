@@ -59,6 +59,7 @@ public class UsersignupActivity extends AppCompatActivity implements View.OnClic
                         if(task.isSuccessful()){
                             Toast.makeText(getApplicationContext(),"Registration success",Toast.LENGTH_LONG).show();
                             customer.setId(firebaseAuth.getUid());
+                            UserActivity.customer=customer;
                             databaseCustomer.child(firebaseAuth.getUid()).setValue(customer);
                             Intent i=new Intent(getApplicationContext(),MapsActivity.class);
                             startActivity(i);

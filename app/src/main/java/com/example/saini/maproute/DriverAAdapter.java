@@ -61,7 +61,7 @@ public class DriverAAdapter extends ArrayAdapter<Driver> {
        final CardViewHolder viewHolder;
         if (row == null) {
             LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = inflater.inflate(R.layout.orders_cus_card, parent, false);
+            row = inflater.inflate(R.layout.drivers_a_card, parent, false);
             viewHolder = new CardViewHolder();
             viewHolder.drivername = (TextView) row.findViewById(R.id.drivername);
             viewHolder.phone = (TextView) row.findViewById(R.id.phonenumber);

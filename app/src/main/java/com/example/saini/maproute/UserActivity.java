@@ -104,14 +104,14 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 for(DataSnapshot drivers: dataSnapshot.getChildren()) {
                                     Driver temp_driver = drivers.getValue(Driver.class);
-                                    if(temp_driver.getId().equals(firebaseAuth.getUid())) {
+
+                                    if(firebaseAuth.getUid().equals(temp_driver.getId())) {
                                         isUser=true;
                                         driver = temp_driver;
                                         Intent i = new Intent(getApplicationContext(), MapsActivity.class);
                                         startActivity(i);
                                         break;
                                     }
-
                                 }
                             }
 

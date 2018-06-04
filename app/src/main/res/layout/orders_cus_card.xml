@@ -28,7 +28,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dip"
                     android:layout_weight="1"
-                    android:paddingLeft="5dip" />
+                    android:paddingLeft="5dip"
+                    android:textColor="@android:color/holo_blue_dark" />
             </TableRow>
 
 
@@ -71,7 +72,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Status"
+                    android:text="status"
                     android:textStyle="bold" />
 
                 <TextView
@@ -84,11 +85,10 @@
                     android:paddingLeft="5dip" />
             </TableRow>
             <TableRow>
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Feedback"
+                    android:text="feedback"
                     android:textStyle="bold" />
 
                 <TextView
@@ -100,8 +100,8 @@
                     android:inputType="number"
                     android:paddingLeft="5dip" />
             </TableRow>
-
         </TableLayout>
+
     </LinearLayout>
 
 </FrameLayout>

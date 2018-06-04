@@ -26,7 +26,7 @@ public class OrderDAdapter extends ArrayAdapter<OrderDcard> {
     private List<OrderDcard> cardList = new ArrayList<OrderDcard>();
 
     static class CardViewHolder {
-        TextView drivername;
+        TextView customername;
         TextView phone;
         TextView status;
         TextView feedback;
@@ -64,9 +64,9 @@ public class OrderDAdapter extends ArrayAdapter<OrderDcard> {
         final CardViewHolder viewHolder;
         if (row == null) {
             LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = inflater.inflate(R.layout.orders_cus_card, parent, false);
+            row = inflater.inflate(R.layout.orders_dr_card, parent, false);
             viewHolder = new CardViewHolder();
-            viewHolder.drivername = (TextView) row.findViewById(R.id.drivername);
+            viewHolder.customername = (TextView) row.findViewById(R.id.customername);
             viewHolder.phone = (TextView) row.findViewById(R.id.phonenumber);
             viewHolder.status = (TextView) row.findViewById(R.id.status);
             viewHolder.feedback = (TextView) row.findViewById(R.id.feedback);
@@ -79,7 +79,7 @@ public class OrderDAdapter extends ArrayAdapter<OrderDcard> {
             viewHolder = (CardViewHolder)row.getTag();
         }
         OrderDcard card = getItem(position);
-        viewHolder.drivername.setText(card.getName());
+        viewHolder.customername.setText(card.getName());
         viewHolder.phone.setText(card.getPhone());
         viewHolder.status.setText(card.getStatus());
         viewHolder.feedback.setText(card.getFeedback());

@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,7 +28,7 @@ public class ViewOrdersA extends AppCompatActivity {
 
         orderAAdapter = new OrderAAdapter(getApplicationContext(), R.layout.orders_dr_card);
 
-        databaseOrders = FirebaseDatabase.getInstance().getReference("order");
+       databaseOrders = FirebaseDatabase.getInstance().getReference("order");
 
         databaseOrders.addValueEventListener(new ValueEventListener() {
             @Override

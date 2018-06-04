@@ -56,6 +56,7 @@ import java.util.Map;
 
 
 import static com.example.saini.maproute.FirstActivity.user;
+import static com.example.saini.maproute.UserActivity.driver;
 import static com.example.saini.maproute.UserActivity.isUser;
 
 public class MapsActivity extends NavigateActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
@@ -129,9 +130,10 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
     }
 
     public void onClick(View view) {
-        if (view == search) {
+        if (view.getId() == R.id.search) {
             // LocateVehicles();
             //PointLocators();
+            Toast.makeText(this,"Added",Toast.LENGTH_SHORT).show();
 
             EditText loc1 = (EditText) findViewById(R.id.loc1);
             EditText loc2 = (EditText) findViewById(R.id.loc2);
@@ -444,12 +446,12 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
         }
         latitude = location.getLatitude();
         longitude = location.getLongitude();
-
+/*testing
         if(user==2) {
+
             databaseDriver.child(customerid).child("latitude").setValue(location.getLatitude());
             databaseDriver.child(customerid).child("longitude").setValue(location.getLongitude());
-        }
-
+        }*/
         LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
         points.add(latLng);
         if(user!=2) {

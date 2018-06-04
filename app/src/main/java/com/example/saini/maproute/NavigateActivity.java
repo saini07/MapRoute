@@ -73,7 +73,6 @@ public class NavigateActivity extends AppCompatActivity
                 Order order = new Order(UserActivity.customer,ide);
                 databaseOrder.child(ide).setValue(order);
                 Toast.makeText(getApplicationContext(),"Placed order",Toast.LENGTH_LONG).show();
-
                 break;
 
             case R.id.view_order_cus:
@@ -87,6 +86,8 @@ public class NavigateActivity extends AppCompatActivity
                 break;
 
             case R.id.drivers_admin:
+                Intent da=new Intent(getApplicationContext(),ViewDriversA.class);
+                startActivity(da);
                 Toast.makeText(getApplicationContext(),"driver details",Toast.LENGTH_LONG).show();
                 break;
 
@@ -109,6 +110,8 @@ public class NavigateActivity extends AppCompatActivity
                 break;
 
             case R.id.signout:
+                Intent signout = new Intent(getApplicationContext(),FirstActivity.class);
+                startActivity(signout);
                 Toast.makeText(getApplicationContext(),"signout",Toast.LENGTH_LONG).show();
                 break;
         }
