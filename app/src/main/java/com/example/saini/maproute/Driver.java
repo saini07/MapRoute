@@ -5,6 +5,7 @@ public class Driver {
     String vehicle_type;
     String license;
     String vehicle_no;
+    String type = "driver";
 
     public String getId() {
         return id;
@@ -13,6 +14,7 @@ public class Driver {
     public void setId(String id) {
         this.id = id;
     }
+
 
     String id;
     long loads,phone_no;

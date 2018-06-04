@@ -16,6 +16,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import static com.example.saini.maproute.FirstActivity.user;
 
@@ -27,6 +32,11 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
 
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
+    public static Boolean isUser=false;
+    public static  Driver driver;
+    public static Customer customer;
+    DatabaseReference databaseDriver;
+    DatabaseReference databaseCustomer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +48,8 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         buttonsignin= (Button) findViewById(R.id.buttonsignin);
 
         textView = (TextView) findViewById(R.id.textview1);
-
+        databaseCustomer = FirebaseDatabase.getInstance().getReference("Customer");
+        databaseDriver = FirebaseDatabase.getInstance().getReference("Driver");
         progressDialog = new ProgressDialog(this);
         textView.setOnClickListener(this);
         buttonsignin.setOnClickListener(this);
@@ -61,10 +72,57 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 progressDialog.dismiss();
-                if(task.isSuccessful()){
-                    Toast.makeText(getApplicationContext(),"valid credentials",Toast.LENGTH_SHORT).show();
-                    Intent i=new Intent(getApplicationContext(),MapsActivity.class);
-                    startActivity(i);
+                if(task.isSuccessful()) {
+                   // Toast.makeText(getApplicationContext(), "valid credentials", Toast.LENGTH_SHORT).show();
+                    if(user==1) {
+                        databaseCustomer.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                for(DataSnapshot customers: dataSnapshot.getChildren()) {
+                                    Customer temp_customer = customers.getValue(Customer.class);
+
+                                    if(temp_customer.getId().equals(firebaseAuth.getUid())) {
+                                        isUser=true;
+                                        customer = temp_customer;
+                                        Intent i = new Intent(getApplicationContext(), MapsActivity.class);
+                                        startActivity(i);
+                                        break;
+                                    }
+
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                    else if(user == 2) {
+                        databaseDriver.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                for(DataSnapshot drivers: dataSnapshot.getChildren()) {
+                                    Driver temp_driver = drivers.getValue(Driver.class);
+                                    if(temp_driver.getId().equals(firebaseAuth.getUid())) {
+                                        isUser=true;
+                                        driver = temp_driver;
+                                        Intent i = new Intent(getApplicationContext(), MapsActivity.class);
+                                        startActivity(i);
+                                        break;
+                                    }
+
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+
+
                 }
                 else{
                     Toast.makeText(getApplicationContext(),"invalid Credentials",Toast.LENGTH_SHORT).show();
@@ -76,21 +134,21 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
 
-        if(view == textView){
-            if( user == 1 ){
-            Intent i=new Intent(this,UsersignupActivity.class);
-            startActivity(i);
-        }
-        if(user == 2){
-                Intent i=new Intent(this,DriverActivity.class);
+        if(view == textView) {
+            if (user == 1) {
+                Intent i = new Intent(this, UsersignupActivity.class);
                 startActivity(i);
+            }
+            if (user == 2) {
+                Intent i = new Intent(this, DriverActivity.class);
+                startActivity(i);
+            }
         }
-
         if(view == buttonsignin){
             userlogin();
         }
 
     }
 
-}}
+}
 

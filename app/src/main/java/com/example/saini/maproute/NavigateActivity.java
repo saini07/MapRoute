@@ -1,5 +1,6 @@
 package com.example.saini.maproute;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,9 +13,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import static com.example.saini.maproute.FirstActivity.user;
 
 public class NavigateActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    DatabaseReference databaseOrder;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,15 +34,7 @@ public class NavigateActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
+        databaseOrder = FirebaseDatabase.getInstance().getReference("order");
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -39,39 +42,19 @@ public class NavigateActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        if(user==0)
+        navigationView.inflateMenu(R.menu.admin);
+        else if(user==1)
+            navigationView.inflateMenu(R.menu.activity_navigate_drawer);
+        else if(user==2)
+            navigationView.inflateMenu(R.menu.driver);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
             super.onBackPressed();
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.navigate, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -80,18 +63,54 @@ public class NavigateActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.prev_orders) {
-            // Handle the camera action
-        } else if (id == R.id.curr_orders) {
+        switch(id) {
+            case R.id.home:
+                Toast.makeText(getApplicationContext(),"home",Toast.LENGTH_LONG).show();
+                break;
+            case R.id.place_order_cus:
 
-        } else if (id == R.id.Feedback) {
+                String ide= databaseOrder.push().getKey();
+                Order order = new Order(UserActivity.customer,ide);
+                databaseOrder.child(ide).setValue(order);
+                Toast.makeText(getApplicationContext(),"Placed order",Toast.LENGTH_LONG).show();
 
-        } else if (id == R.id.signout) {
+                break;
 
-        } else if (id == R.id.nav_share) {
+            case R.id.view_order_cus:
+                Intent oc = new Intent(getApplicationContext(),ViewOrdersC.class);
+                startActivity(oc);
+                Toast.makeText(getApplicationContext(),"view order",Toast.LENGTH_LONG).show();
+                break;
 
-        } else if (id == R.id.nav_send) {
+            case R.id.feedback_cus:
+                Toast.makeText(getApplicationContext(),"feedback",Toast.LENGTH_LONG).show();
+                break;
 
+            case R.id.drivers_admin:
+                Toast.makeText(getApplicationContext(),"driver details",Toast.LENGTH_LONG).show();
+                break;
+
+            case R.id.orders_admin:
+                Intent oa = new Intent(getApplicationContext(),ViewOrdersA.class);
+                startActivity(oa);
+                Toast.makeText(getApplicationContext(),"order details",Toast.LENGTH_LONG).show();
+                break;
+
+            case R.id.orders_driver:
+                Intent od = new Intent(getApplicationContext(),ViewOrdersD.class);
+                startActivity(od);
+                Toast.makeText(getApplicationContext(),"new orders",Toast.LENGTH_LONG).show();
+                break;
+
+            case R.id.trips_driver:
+                Intent td = new Intent(getApplicationContext(),ViewTripsD.class);
+                startActivity(td);
+                Toast.makeText(getApplicationContext(),"my trips",Toast.LENGTH_LONG).show();
+                break;
+
+            case R.id.signout:
+                Toast.makeText(getApplicationContext(),"signout",Toast.LENGTH_LONG).show();
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

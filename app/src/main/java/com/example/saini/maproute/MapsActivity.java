@@ -15,11 +15,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -51,10 +54,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.example.saini.maproute.DriverActivity.driver;
-import static com.example.saini.maproute.FirstActivity.user;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
+import static com.example.saini.maproute.FirstActivity.user;
+import static com.example.saini.maproute.UserActivity.isUser;
+
+public class MapsActivity extends NavigateActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private GoogleMap mMap;
@@ -78,7 +82,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     DatabaseReference databaseVehicle;
     public static int flag = 0;
     double latitude,longitude;
-    Map<VehicleInformation,DriverInformation> locator;
+   // Map<VehicleInformation,DriverInformation> locator;
     private ArrayList<LatLng> points;
     Polyline line;
     BitmapDescriptor icon;
@@ -90,7 +94,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        //setContentView(R.layout.activity_maps);
+        FrameLayout layout=(FrameLayout) findViewById(R.id.layout);
+        getLayoutInflater().inflate(R.layout.activity_maps,layout);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
@@ -107,7 +113,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // vehicle_list = new ArrayList<>();
 
-        locator = new HashMap<VehicleInformation, DriverInformation>();
+       // locator = new HashMap<VehicleInformation, DriverInformation>();
         points = new ArrayList<LatLng>();
         driver_info = new HashMap<String, Driver>();
         driver_movement = new HashMap<String, ArrayList<LatLng>>();
@@ -123,7 +129,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void onClick(View view) {
-        if (view.getId() == R.id.search) {
+        if (view == search) {
             // LocateVehicles();
             //PointLocators();
 
@@ -214,7 +220,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }  //For directions
 
 
-    private void LocateVehicles() {
+  /*  private void LocateVehicles() {
         if(locator!=null) locator.clear();
         mMap.clear();
 
@@ -330,7 +336,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
-
+*/
 
     private String getDirectionsUrl() {
         StringBuilder googleDirectionsUrl = new StringBuilder("https://maps.googleapis.com/maps/api/directions/json?");
@@ -393,11 +399,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Locate(origin, dest);
             }
 
-            if (user == 2) {
-                customerid = databaseDriver.push().getKey();
-                driver.setId(customerid);
-                databaseDriver.child(customerid).setValue(driver);
-            }
+
             if (user != 2) {
                 databaseDriver.addValueEventListener(new ValueEventListener() {
                     @Override

@@ -9,26 +9,38 @@
 
     <Button
         android:id="@+id/customer"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="80dp"
-        android:text="Customer" />
+        android:layout_marginTop="111dp"
+        android:background="@color/colorPrimaryDark"
+        android:text="Customer"
+        android:textColor="@android:color/background_light"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/admin"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="Admin" />
+        android:background="@color/colorPrimaryDark"
+        android:text="Admin"
+        android:textColor="@android:color/background_light"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/driver"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="73dp"
-        android:text="Driver" />
+        android:layout_marginBottom="113dp"
+        android:background="@color/colorPrimaryDark"
+        android:text="Driver"
+        android:textColor="@android:color/background_light"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 </RelativeLayout>

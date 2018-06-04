@@ -15,16 +15,22 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class UsersignupActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText Emailid;
     private EditText userpassword;
     private Button button;
+    private EditText Cus_name;
+    private EditText phone;
 
 
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
+    private DatabaseReference databaseCustomer;
+     Customer customer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,23 +40,16 @@ public class UsersignupActivity extends AppCompatActivity implements View.OnClic
         Emailid = (EditText) findViewById(R.id.editText1);
         userpassword = (EditText) findViewById(R.id.editText2);
         button = (Button) findViewById(R.id.button);
+        Cus_name=(EditText)findViewById(R.id.cus_name);
+        phone=(EditText)findViewById(R.id.phone);
+        databaseCustomer = FirebaseDatabase.getInstance().getReference("Customer");
 
         progressDialog = new ProgressDialog(this);
         button.setOnClickListener(this);
     }
 
-    private void registerUser(){
-        String email = Emailid.getText().toString().trim();
-        String password  = userpassword.getText().toString().trim();
-        if(TextUtils.isEmpty(email)){
-            Toast.makeText(this,"Please enter email",Toast.LENGTH_LONG).show();
-            return;
-        }
+    private void registerUser(String email,String password){
 
-        if(TextUtils.isEmpty(password)){
-            Toast.makeText(this,"Please enter password",Toast.LENGTH_LONG).show();
-            return;
-        }
         progressDialog.setMessage("Registering Please Wait...");
         progressDialog.show();
         firebaseAuth.createUserWithEmailAndPassword(email, password)
@@ -59,6 +58,8 @@ public class UsersignupActivity extends AppCompatActivity implements View.OnClic
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
                             Toast.makeText(getApplicationContext(),"Registration success",Toast.LENGTH_LONG).show();
+                            customer.setId(firebaseAuth.getUid());
+                            databaseCustomer.child(firebaseAuth.getUid()).setValue(customer);
                             Intent i=new Intent(getApplicationContext(),MapsActivity.class);
                             startActivity(i);
                         }else{
@@ -74,7 +75,25 @@ public class UsersignupActivity extends AppCompatActivity implements View.OnClic
     public void onClick(View view) {
 
         if(view == button){
-            registerUser();
+            String email = Emailid.getText().toString().trim();
+            String password  = userpassword.getText().toString().trim();
+            if(TextUtils.isEmpty(email)){
+                Toast.makeText(this,"Please enter email",Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            if(TextUtils.isEmpty(password)){
+                Toast.makeText(this,"Please enter password",Toast.LENGTH_LONG).show();
+                return;
+            }
+           /* if(!(TextUtils.isEmpty(Cus_name.getText().toString()))||!(TextUtils.isEmpty(phone.getText().toString()))) {
+                Toast.makeText(this,"Enter correct details",Toast.LENGTH_LONG).show();
+                return;
+            }*/
+
+            customer = new Customer(Cus_name.getText().toString(),Long.valueOf(phone.getText().toString()));
+
+            registerUser(email,password);
         }
     }
 

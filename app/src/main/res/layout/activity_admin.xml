@@ -15,7 +15,7 @@
         android:layout_marginTop="84dp"
         android:drawableLeft="@drawable/ic_action_name"
         android:ems="10"
-        android:hint="adminid"
+        android:hint="Username"
         android:inputType="textPersonName" />
 
     <EditText
@@ -38,7 +38,9 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="212dp"
-        android:background="@android:color/holo_blue_dark"
+        android:background="@color/colorPrimaryDark"
         android:text="login"
-        android:textColor="@android:color/background_light" />
+        android:textColor="@android:color/background_light"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 </RelativeLayout>

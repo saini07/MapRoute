@@ -5,30 +5,21 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/prev_orders"
-            android:title="Previous Orders" />
+            android:id="@+id/home"
+            android:title="Home"
+            android:checked="true"/>
         <item
-            android:id="@+id/curr_orders"
-            android:title="Current Orders" />
+            android:id="@+id/place_order_cus"
+            android:title="Place Order" />
         <item
-            android:id="@+id/Feedback"
+            android:id="@+id/view_order_cus"
+            android:title="View Orders" />
+        <item
+            android:id="@+id/feedback_cus"
             android:title="Feedback" />
         <item
             android:id="@+id/signout"
             android:title="Signout" />
     </group>
-
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
-        </menu>
-    </item>
 
 </menu>

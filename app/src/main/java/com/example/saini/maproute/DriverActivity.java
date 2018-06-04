@@ -15,20 +15,24 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
-public class DriverActivity extends AppCompatActivity implements View.OnClickListener {
+public class DriverActivity extends NavigateActivity implements View.OnClickListener {
 
     EditText driver_name, loads, phone_no, vehicle_type, vehicle_no, license, mailid, driverpassword;
     Button b1;
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
-    public static Driver driver;
+     Driver driver;
+    DatabaseReference databaseDriver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver);
         firebaseAuth = FirebaseAuth.getInstance();
+        databaseDriver = FirebaseDatabase.getInstance().getReference("Driver");
         b1 = (Button) findViewById(R.id.submit_button);
         driver_name = (EditText) findViewById(R.id.driver_name);
         loads = (EditText) findViewById(R.id.loads);
@@ -62,6 +66,9 @@ public class DriverActivity extends AppCompatActivity implements View.OnClickLis
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Toast.makeText(getApplicationContext(), "Registration success", Toast.LENGTH_LONG).show();
+                            //firebaseAuth.getUid();
+                            driver.setId(firebaseAuth.getUid());
+                            databaseDriver.child(firebaseAuth.getUid()).setValue(driver);
                             Intent i = new Intent(getApplicationContext(), MapsActivity.class);
                             startActivity(i);
                         } else {
