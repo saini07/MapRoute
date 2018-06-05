@@ -49,14 +49,13 @@
             android:name=".NavigateActivity"
             android:label="@string/title_activity_navigate"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".MapsActivity2"
-            android:label="@string/title_activity_maps2" />
+
         <activity android:name=".ViewOrdersC" />
         <activity android:name=".ViewTripsD" />
         <activity android:name=".ViewOrdersD" />
         <activity android:name=".ViewOrdersA" />
-        <activity android:name=".ViewDriversA"></activity>
+        <activity android:name=".ViewDriversA" />
+        <activity android:name=".FeedbackDisplay"></activity>
     </application>
 
 </manifest>
