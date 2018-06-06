@@ -9,11 +9,16 @@
             android:title="Home"
             android:checked="true"/>
         <item
+            android:id="@+id/view_maps"
+            android:title="View Maps" />
+
+        <item
             android:id="@+id/place_order_cus"
             android:title="Place Order" />
         <item
             android:id="@+id/view_order_cus"
             android:title="View Orders" />
+
         <item
             android:id="@+id/feedback_cus"
             android:title="Feedback" />

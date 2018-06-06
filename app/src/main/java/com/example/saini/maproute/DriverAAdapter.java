@@ -1,6 +1,7 @@
 package com.example.saini.maproute;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.LocationListener;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ public class DriverAAdapter extends ArrayAdapter<Driver> {
     DatabaseReference databaseDriver;
     String id;
     String stat;
+    Context ctx;
     private List<Driver> cardList = new ArrayList<Driver>();
 
     static class CardViewHolder {
@@ -36,7 +38,7 @@ public class DriverAAdapter extends ArrayAdapter<Driver> {
     public DriverAAdapter(@NonNull Context context, int resource) {
         super(context, resource);
         databaseDriver = FirebaseDatabase.getInstance().getReference("Driver");
-
+        ctx = context;
     }
 
     @Override
@@ -87,6 +89,9 @@ public class DriverAAdapter extends ArrayAdapter<Driver> {
             @Override
             public void onClick(View v) {
                 id = cardList.get(position).getId();
+                Intent i = new Intent(getContext(),FeedbackDisplay.class);
+                i.putExtra("id",id);
+                ctx.startActivity(i);
 
                 Toast.makeText(getContext(),"feedback to be displayed", Toast.LENGTH_LONG).show();
 

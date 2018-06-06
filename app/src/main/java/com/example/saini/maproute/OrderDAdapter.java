@@ -109,7 +109,7 @@ public class OrderDAdapter extends ArrayAdapter<OrderDcard> {
             public void onClick(View v) {
                id = cardList.get(position).getId();
                databaseOrder.child(id).child("status").setValue("processing");
-               databaseOrder.child(id).child("driver").setValue(UserActivity.driver);
+               databaseOrder.child(id).child("driver").setValue(MapsActivity.driver);
 
                viewHolder.deny.setVisibility(View.GONE);
                viewHolder.complete.setVisibility(View.GONE);

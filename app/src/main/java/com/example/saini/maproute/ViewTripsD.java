@@ -40,7 +40,7 @@ public class ViewTripsD extends AppCompatActivity {
 
                     if(order.getStatus().equals("processing")|| order.getStatus().equals("completed"))
 
-                    if(temp_driver.getId().equals(UserActivity.driver.getId())) {
+                    if(temp_driver.getId().equals(MapsActivity.driver.getId())) {
                         OrderCard orderCard;
                         String fd = "";
                         if(order.getFeedback()==null) {

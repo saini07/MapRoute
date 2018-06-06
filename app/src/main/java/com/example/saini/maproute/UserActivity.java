@@ -33,8 +33,6 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
     public static Boolean isUser=false;
-    public static  Driver driver;
-    public static Customer customer;
     DatabaseReference databaseDriver;
     DatabaseReference databaseCustomer;
 
@@ -78,18 +76,11 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                         databaseCustomer.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                for(DataSnapshot customers: dataSnapshot.getChildren()) {
-                                    Customer temp_customer = customers.getValue(Customer.class);
 
-                                    if(temp_customer.getId().equals(firebaseAuth.getUid())) {
-                                        isUser=true;
-                                        customer = temp_customer;
-                                        Intent i = new Intent(getApplicationContext(), MapsActivity.class);
-                                        startActivity(i);
-                                        break;
-                                    }
+                                MapsActivity.customer = dataSnapshot.child(firebaseAuth.getUid()).getValue(Customer.class);
 
-                                }
+
+
                             }
 
                             @Override
@@ -102,17 +93,11 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                         databaseDriver.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                for(DataSnapshot drivers: dataSnapshot.getChildren()) {
-                                    Driver temp_driver = drivers.getValue(Driver.class);
+                               // for(DataSnapshot drivers: dataSnapshot.getChildren()) {
+                                    MapsActivity.driver = dataSnapshot.child(firebaseAuth.getUid()).getValue(Driver.class);
 
-                                    if(firebaseAuth.getUid().equals(temp_driver.getId())) {
-                                        isUser=true;
-                                        driver = temp_driver;
-                                        Intent i = new Intent(getApplicationContext(), MapsActivity.class);
-                                        startActivity(i);
-                                        break;
-                                    }
-                                }
+
+                                //}
                             }
 
                             @Override
@@ -121,7 +106,9 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                             }
                         });
                     }
-
+                    isUser = true;
+                    Intent i = new Intent(getApplicationContext(), MapsActivity.class);
+                    startActivity(i);
 
                 }
                 else{

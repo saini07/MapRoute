@@ -27,8 +27,11 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -56,11 +59,12 @@ import java.util.Map;
 
 
 import static com.example.saini.maproute.FirstActivity.user;
-import static com.example.saini.maproute.UserActivity.driver;
+//import static com.example.saini.maproute.UserActivity.driver;
 import static com.example.saini.maproute.UserActivity.isUser;
 
 public class MapsActivity extends NavigateActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+        GoogleApiClient.OnConnectionFailedListener{
+        //, LocationListener {
 
     private GoogleMap mMap;
     private GoogleApiClient client;
@@ -78,9 +82,12 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
     public static final int REQUEST_LOCATION = 1;
+    public static Driver driver;
+    public static Customer customer;
     DatabaseReference databaseTracker;
     DatabaseReference databaseDriver;
-    DatabaseReference databaseVehicle;
+    DatabaseReference databaseCustomer;
+    DatabaseReference databaseOrder;
     public static int flag = 0;
     double latitude,longitude;
    // Map<VehicleInformation,DriverInformation> locator;
@@ -90,6 +97,9 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
     String customerid;
     Map<String,Driver> driver_info;
     Map<String,ArrayList<LatLng>> driver_movement;
+    Map<String,Customer> customer_info;
+    Map<String,ArrayList<LatLng>> customer_movement;
+    public static int view_map = 0;
 
 
     @Override
@@ -101,32 +111,138 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
+
+        startService();
+        Log.e(TAG,"n create");
         databaseTracker = FirebaseDatabase.getInstance().getReference("track");
         databaseDriver = FirebaseDatabase.getInstance().getReference("Driver");
-        // databaseVehicle = FirebaseDatabase.getInstance().getReference("VehicleInformation");
+        databaseCustomer = FirebaseDatabase.getInstance().getReference("Customer");
+        databaseOrder = FirebaseDatabase.getInstance().getReference("order");
+
+
+        Toast.makeText(getApplicationContext()," user "+user,Toast.LENGTH_LONG).show();
+
 
         if(user == 2) {
             icon = BitmapDescriptorFactory.fromResource(R.drawable.truck);
         }
-        else {
+        else if (user==1){
             icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
         }
+        else {
+            icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE);
+        }
+
+
 
         // vehicle_list = new ArrayList<>();
 
        // locator = new HashMap<VehicleInformation, DriverInformation>();
+
+
+
         points = new ArrayList<LatLng>();
+
         driver_info = new HashMap<String, Driver>();
         driver_movement = new HashMap<String, ArrayList<LatLng>>();
+
+        customer_info = new HashMap<String, Customer>();
+        customer_movement = new HashMap<String, ArrayList<LatLng>>();
+
+        loc1 = (EditText) findViewById(R.id.loc1);
+        loc2 = (EditText) findViewById(R.id.loc2);
+        search = (Button) findViewById(R.id.search);
+        history = (Button) findViewById(R.id.history);
+
+
+        if(view_map==1){
+
+            loc1.setVisibility(View.GONE);
+            loc2.setVisibility(View.GONE);
+            search.setVisibility(View.GONE);
+            history.setVisibility(View.GONE);
+        }
+        else if(view_map == 0) {
+            loc1.setVisibility(View.VISIBLE);
+            loc2.setVisibility(View.VISIBLE);
+            search.setVisibility(View.VISIBLE);
+            history.setVisibility(View.VISIBLE);
+        }
+
+        Log.e(TAG," sekvsb "+view_map);
+        init();
+
+
         //verifyPermissions(this);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+
+
+
         //Toast.makeText(this,flag,Toast.LENGTH_LONG).show();
 
 
+    }
+
+    private void startService() {
+        startService(new Intent(this, MyService.class));
+       // finish();
+    }
+
+    private void init() {
+
+        Log.e(TAG," sekbhi init ");
+        if (user != 2) {
+            databaseDriver.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot drives : dataSnapshot.getChildren()) {
+                        Driver temp_driver = drives.getValue(Driver.class);
+                        driver_info.put(temp_driver.getId(), temp_driver);
+                        ArrayList<LatLng> list = new ArrayList<>();
+                        list.add(new LatLng(temp_driver.getLatitude(), temp_driver.getLongitude()));
+                        driver_movement.put(temp_driver.getId(), list);
+                        Log.e(TAG,"retrieving driver init");
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+            Log.e(TAG, "initials added");
+
+        }
+
+
+        if(user == 0) {
+            databaseCustomer.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot customers : dataSnapshot.getChildren()) {
+                        Customer temp_customer = customers.getValue(Customer.class);
+                        Log.e(TAG,temp_customer.getId());
+                        customer_info.put(temp_customer.getId(), temp_customer);
+                        ArrayList<LatLng> list = new ArrayList<>();
+                        list.add(new LatLng(temp_customer.getLatitude(), temp_customer.getLongitude()));
+                        customer_movement.put(temp_customer.getId(), list);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+            Log.e(TAG, "initials added");
+
+        }
     }
 
     public void onClick(View view) {
@@ -135,8 +251,7 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
             //PointLocators();
             Toast.makeText(this,"Added",Toast.LENGTH_SHORT).show();
 
-            EditText loc1 = (EditText) findViewById(R.id.loc1);
-            EditText loc2 = (EditText) findViewById(R.id.loc2);
+
             String origin = loc1.getText().toString();
             String dest = loc2.getText().toString();
 
@@ -156,9 +271,6 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
             }
             else {
                 Toast.makeText(this,"Fill in the details",Toast.LENGTH_LONG).show();
-                if(user!=2) {
-                    // LocateVehicles();
-                }
 
             }
         }
@@ -222,123 +334,6 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
     }  //For directions
 
 
-  /*  private void LocateVehicles() {
-        if(locator!=null) locator.clear();
-        mMap.clear();
-
-
-
-        LatLng latLng = new LatLng(latitude,longitude);
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("You are here");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-        Log.e(TAG,"Adding initial marker");
-        currentLocationMarker = mMap.addMarker(markerOptions);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomBy(10));
-
-        databaseVehicle.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                //vehicle_list.clear();
-                for(DataSnapshot vehicle: dataSnapshot.getChildren()) {
-                    final VehicleInformation vehicleInformation = vehicle.getValue(VehicleInformation.class);
-                    // final VehicleInformation temp_vehicle = vehicleInformation;
-                    Log.e(TAG,"in vehicle data");
-                    float[] results = new float[10];
-                    Location.distanceBetween(latitude,longitude,vehicleInformation.getLatitude(),vehicleInformation.getLongitude(),results);
-                    float distance = (float) (results[0]/1000*1.0);
-
-                    databaseDriver.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            for (DataSnapshot driver : dataSnapshot.getChildren()) {
-                                Log.e(TAG,"in driver data");
-                                // Toast.makeText(getApplicationContext(),"In driver data added",Toast.LENGTH_LONG).show();
-                                DriverInformation driverInformation = driver.getValue(DriverInformation.class);
-                                if(driverInformation.getId() == vehicleInformation.getId()) {
-                                    locator.put(vehicleInformation,driverInformation);
-                                    Log.e(TAG,"in map data added");
-                                    //  Toast.makeText(getApplicationContext(),"In map data added ",Toast.LENGTH_LONG).show();
-                                    break;
-                                }
-                            }
-                            PointLocators();
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-
-
-
-                    // if(distance < 50.0) {
-                    Log.e(TAG,"in vehicle data added"+vehicleInformation.getVehicle_Type()+vehicleInformation.getVehicle_No());
-                    //  Toast.makeText(getApplicationContext(),"in vehicle data added",Toast.LENGTH_LONG).show();
-                    //------vehicle_list.add(vehicleInformation);
-                    //}
-                    //retrievalList.add(tracker);
-
-                }
-                flag=1;
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        //while(flag==0) {}
-
-
-    }
-
-    private void PointLocators() {
-        Log.e(TAG,"fjghg");
-        if(locator!=null) {
-            Log.e(TAG,"khvk "+locator.size());
-            for (Map.Entry<VehicleInformation, DriverInformation> entry : locator.entrySet()) {
-
-                Log.e(TAG,entry.getKey().getVehicle_Type());
-                Log.e(TAG,entry.getValue().getDriver_name());
-            }
-            for (Map.Entry<VehicleInformation, DriverInformation> entry : locator.entrySet()) {
-                VehicleInformation vehicleInformation = entry.getKey();
-                DriverInformation driverInformation = entry.getValue();
-                Log.e(TAG,Long.toString(vehicleInformation.getId()));
-                Log.e(TAG,Long.toString(driverInformation.getId()));
-                // Toast.makeText(getApplicationContext(),Long.toString(driverInformation.getId())+Long.toString(vehicleInformation.getId()),Toast.LENGTH_LONG).show();
-                LatLng latLng = new LatLng(vehicleInformation.getLatitude(),vehicleInformation.getLongitude());
-                MarkerOptions markerOptions = new MarkerOptions();
-                markerOptions.position(latLng);
-                if (vehicleInformation.getVehicle_Type().equals("Truck")) {
-                    markerOptions.title("Truck");
-                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.truck));
-                    markerOptions.snippet("Driver " + driverInformation.getDriver_name()+"Phone Number" + driverInformation.getPhone()+"Vehicle Number" + vehicleInformation.getVehicle_No());
-
-                } else if (vehicleInformation.getVehicle_Type().equals("DCM")) {
-                    markerOptions.title("DCM");
-                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.truck));
-                    markerOptions.snippet("Driver " + driverInformation.getDriver_name()+"Phone Number" + driverInformation.getPhone()+"Vehicle Number" + vehicleInformation.getVehicle_No());
-
-
-                } else if (vehicleInformation.getVehicle_Type().equals("MiniTruck")) {
-                    markerOptions.title("MiniTruck");
-                    markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.mini_truck));
-                    markerOptions.snippet("Driver " + driverInformation.getDriver_name()+"Phone Number" + driverInformation.getPhone()+"Vehicle Number" + vehicleInformation.getVehicle_No());
-
-
-                }
-                mMap.addMarker(markerOptions);
-            }
-        }
-    }
-*/
 
     private String getDirectionsUrl() {
         StringBuilder googleDirectionsUrl = new StringBuilder("https://maps.googleapis.com/maps/api/directions/json?");
@@ -391,6 +386,7 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
             buildGoogleApiClient();
             Log.e(TAG, "about to add location");
             mMap.setMyLocationEnabled(true);
+
             // LocateVehicles();
             if (flag == 1) {
                 flag = 0;
@@ -402,28 +398,7 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
             }
 
 
-            if (user != 2) {
-                databaseDriver.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot drives : dataSnapshot.getChildren()) {
-                            Driver temp_driver = drives.getValue(Driver.class);
-                            driver_info.put(temp_driver.getId(), temp_driver);
-                            ArrayList<LatLng> list = new ArrayList<>();
-                            list.add(new LatLng(temp_driver.getLatitude(), temp_driver.getLongitude()));
-                            driver_movement.put(temp_driver.getId(), list);
-                        }
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-                Log.e(TAG, "initials added");
-
-            }
         }
 
     }
@@ -437,57 +412,90 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
         client.connect();
 
     } //apiclient
-    @Override
-    public void onLocationChanged(Location location) {
 
-        lastLocation = location;
-        if(currentLocationMarker!=null) {
-            currentLocationMarker.remove();
-        }
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
-/*testing
-        if(user==2) {
 
-            databaseDriver.child(customerid).child("latitude").setValue(location.getLatitude());
-            databaseDriver.child(customerid).child("longitude").setValue(location.getLongitude());
-        }*/
-        LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-        points.add(latLng);
-        if(user!=2) {
-            Log.e(TAG," here in retrieving the initials");
-            databaseDriver.addChildEventListener(new ChildEventListener() {
+    private void requestLocationUpdates() {
+        // Functionality coming next step
+
+        LocationRequest request = new LocationRequest();
+        request.setInterval(10000);
+        request.setFastestInterval(5000);
+        request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
+        //final String path = getString(R.string.firebase_path) + "/" + getString(R.string.transport_id);
+        int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+
+        if (permission == PackageManager.PERMISSION_GRANTED) {
+            // Request location updates and when an update is
+            // received, store the location in Firebase
+            client.requestLocationUpdates(request, new LocationCallback() {
                 @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                public void onLocationResult(LocationResult locationResult) {
 
-                }
+                    Log.e(TAG,"request location updates");
+                    Location location = locationResult.getLastLocation();
+                    if (location != null) {
+                           // mMap.clear();
+                        lastLocation = location;
+                        if(currentLocationMarker!=null) {
+                            currentLocationMarker.remove();
+                        }
+                            latitude = location.getLatitude();
+                            longitude = location.getLongitude();
+                            LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
+                            Toast.makeText(getApplicationContext()," "+location.getLatitude()+" "+location.getLongitude(),Toast.LENGTH_LONG).show();
+                            MarkerOptions mark = new MarkerOptions();
+                            mark.position(latLng);
+                            mark.title("You are here");
+                            mark.icon(icon);
+                            currentLocationMarker = mMap.addMarker(mark);
+                            points.add(latLng);
 
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                        Log.e(TAG, "location update " + location);
 
-                    String id = dataSnapshot.getKey();
-                    Log.e(TAG,"sc "+id);
-                    Driver temp_driver = dataSnapshot.getValue(Driver.class);
-                    if (driver_info.containsKey(id)) {
-                        ArrayList<LatLng> list = driver_movement.get(id);
-                        list.add(new LatLng(temp_driver.getLatitude(), temp_driver.getLongitude()));
-                        driver_movement.put(id, list);
-                    } else {
-                        driver_info.put(id, temp_driver);
-                        ArrayList<LatLng> list = new ArrayList<>();
-                        list.add(new LatLng(temp_driver.getLatitude(), temp_driver.getLongitude()));
-                        driver_movement.put(id, list);
+                        //redrawLine();
+
+
+
                     }
+                    if(view_map == 1) {
+                        check();
+                    }
+
+
                 }
+            }, null);
+        }
+    }
 
+
+    private void check() {
+
+        Toast.makeText(getApplicationContext(),"user check "+user,Toast.LENGTH_LONG).show();
+        Log.e(TAG, "user check "+user);
+        if(user==0||user==1) {
+            Log.e(TAG," here in retrieving the initials driver ");
+            databaseDriver.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                public void onDataChange(DataSnapshot dataSnapshot) {
 
-                }
+                    for (DataSnapshot drivers : dataSnapshot.getChildren()) {
 
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+                        //Log.e(TAG, "sc " + id);
+                        Driver temp_driver = drivers.getValue(Driver.class);
+                        String id = temp_driver.getId();
+                        if (driver_info.containsKey(id)) {
+                            ArrayList<LatLng> list = driver_movement.get(id);
+                            list.add(new LatLng(temp_driver.getLatitude(), temp_driver.getLongitude()));
+                            driver_movement.put(id, list);
+                        } else {
+                            driver_info.put(id, temp_driver);
+                            ArrayList<LatLng> list = new ArrayList<>();
+                            list.add(new LatLng(temp_driver.getLatitude(), temp_driver.getLongitude()));
+                            driver_movement.put(id, list);
+                        }
+                    }
+                    redrawLine();
                 }
 
                 @Override
@@ -495,25 +503,49 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
 
                 }
             });
-        }
-        redrawLine();
-       /* MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("You are here");
-        markerOptions.icon(icon);
-        Log.e(TAG,"Adding initial marker");
-        currentLocationMarker = mMap.addMarker(markerOptions);*/
-        // mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        // mMap.animateCamera(CameraUpdateFactory.zoomBy(10));
 
-       /* if(client!=null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(client,this);
-        }*/
+
+        }
+        if(user==0) {
+            Log.e(TAG," here in retrieving the initials customer");
+
+            databaseCustomer.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for(DataSnapshot customers : dataSnapshot.getChildren()) {
+                        Customer temp_customer = dataSnapshot.getValue(Customer.class);
+                        String id = temp_customer.getId();
+                        if (customer_info.containsKey(id)) {
+                            ArrayList<LatLng> list = customer_movement.get(id);
+                            list.add(new LatLng(temp_customer.getLatitude(), temp_customer.getLongitude()));
+                            customer_movement.put(id, list);
+                        } else {
+                            customer_info.put(id, temp_customer);
+                            ArrayList<LatLng> list = new ArrayList<>();
+                            list.add(new LatLng(temp_customer.getLatitude(), temp_customer.getLongitude()));
+                            customer_movement.put(id, list);
+                        }
+                    }
+                    redrawLine();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        }
+
+
     }
+
+
 
 
     private  void redrawLine() {
         mMap.clear();
+
         Log.e(TAG,"map cleared before redrawing lines");
         PolylineOptions options = new PolylineOptions().width(5).geodesic(true);
         for(int i = 0;i<points.size();i++) {
@@ -528,11 +560,13 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
         Log.e(TAG,"Adding redrawing marker");
         mMap.addMarker(markerOptions);
 
-        if(user!=2) {
+        if(user == 2) return;
+
+        if(user == 0||user==1) {
             Log.e(TAG, "driver Movement"+driver_movement.size());
             for (Map.Entry<String, ArrayList<LatLng>> entry : driver_movement.entrySet()) {
                 String id = entry.getKey();
-                Driver temp_driver = driver_info.get("id");
+                Driver temp_driver = driver_info.get(id);
                 double t_latitude = 0.0, t_longitude = 0.0;
                 PolylineOptions temp_options = new PolylineOptions().width(5).geodesic(true);
                 ArrayList<LatLng> temp_points = driver_movement.get(id);
@@ -561,34 +595,85 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
                 mMap.addMarker(markerOptions);
             }
         }
+        if(user==0) {
+            Log.e(TAG, "customer Movement"+customer_movement.size());
+            for (Map.Entry<String, ArrayList<LatLng>> entry : customer_movement.entrySet()) {
+                String id = entry.getKey();
+                Customer temp_customer = customer_info.get(id);
+                double t_latitude = 0.0, t_longitude = 0.0;
+                PolylineOptions temp_options = new PolylineOptions().width(5).geodesic(true);
+                ArrayList<LatLng> temp_points = customer_movement.get(id);
+                for (int i = 0; i < temp_points.size(); i++) {
+                    LatLng point = temp_points.get(i);
+                    temp_options.add(point);
+                    t_latitude = point.latitude;
+                    t_longitude = point.longitude;
+                }
+                latLng = new LatLng(t_latitude, t_longitude);
+                markerOptions.position(latLng);
+                BitmapDescriptor temp_icon;
+                temp_icon =  BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+                //if(temp_customer!=null) {
+                    Log.e(TAG, " info " + temp_customer.getCus_name() + temp_customer.getType());
+                    markerOptions.title(temp_customer.getCus_name());
+                    markerOptions.snippet(" "+temp_customer.getPhone());
+
+
+                //}
+                markerOptions.icon(temp_icon);
+                mMap.addMarker(markerOptions);
+            }
+        }
         //line = mMap.addPolyline(options);
     }
+
+
+
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        if (client != null &&
+//                ContextCompat.checkSelfPermission(this,
+//                        Manifest.permission.ACCESS_FINE_LOCATION)
+//                        == PackageManager.PERMISSION_GRANTED) {
+//            LocationServices.FusedLocationApi.requestLocationUpdates(client, locationRequest, this);
+//        }
+//    }
+//
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//
+//        //stop location updates when Activity is no longer active
+//        if (client != null) {
+//            LocationServices.FusedLocationApi.removeLocationUpdates(client, this);
+//        }
+//    }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
         if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-            Location loc = LocationServices.FusedLocationApi.getLastLocation(client);
+
+
+           Location loc = LocationServices.FusedLocationApi.getLastLocation(client);
             if(loc!=null) {
+                Log.e(TAG,"on Connected");
                 LatLng latLng = new LatLng(loc.getLatitude(),loc.getLongitude());
                 MarkerOptions mark = new MarkerOptions();
                 mark.position(latLng);
                 mark.title("You are here");
-                mark.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                mark.icon(icon);
                 currentLocationMarker = mMap.addMarker(mark);
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
             }
 
-        }
-        locationRequest = new LocationRequest();
-        locationRequest.setInterval(5000);
-        locationRequest.setFastestInterval(10000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+            requestLocationUpdates();
 
-        if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
-            LocationServices.FusedLocationApi.requestLocationUpdates(client, locationRequest, (LocationListener) this);
         }
+
     }
 
     public boolean checkLocationPermission() {
@@ -617,17 +702,5 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
-    public static void verifyPermissions(Activity activity) {
-        // Check if we have write permission
-        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION);
 
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            // We don't have permission so prompt the user
-            ActivityCompat.requestPermissions(
-                    activity,
-                    PERMISSIONS_LOCATION,
-                    REQUEST_LOCATION
-            );
-        }
-    }
 }

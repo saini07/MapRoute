@@ -38,7 +38,7 @@ public class ViewOrdersC extends AppCompatActivity {
                     Customer temp_cus = order.getCustomer();
                     if (order.getAccepted().equals("forwarded") && (order.getStatus().equals("processing") || order.getStatus().equals("completed"))) {
 
-                        if (temp_cus.getId().equals(UserActivity.customer.getId())) {
+                        if (temp_cus.getId().equals(MapsActivity.customer.getId())) {
                             OrderCard orderCard;
                             String fd = "";
                             if (order.getFeedback() == null) {

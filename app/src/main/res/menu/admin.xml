@@ -6,6 +6,9 @@
             android:title="Home"
             android:checked="true"/>
         <item
+            android:id="@+id/view_maps"
+            android:title="View Maps" />
+        <item
             android:id="@+id/drivers_admin"
             android:title="Driver Details" />
         <item

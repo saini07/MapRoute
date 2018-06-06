@@ -14,6 +14,7 @@ import com.google.firebase.database.ValueEventListener;
 public class ViewDriversA extends AppCompatActivity {
     private DriverAAdapter driverAAdapter;
     private ListView listView;
+
     DatabaseReference databaseDrivers;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,7 @@ public class ViewDriversA extends AppCompatActivity {
                 }
 
                 listView.setAdapter(driverAAdapter);
+
             }
 
             @Override

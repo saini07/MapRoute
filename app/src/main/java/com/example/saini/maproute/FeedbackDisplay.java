@@ -21,7 +21,7 @@ public class FeedbackDisplay extends AppCompatActivity {
     ListView listView;
     DatabaseReference databaseOrder;
     List<Order> feedbacklist;
-
+    String driverid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +30,7 @@ public class FeedbackDisplay extends AppCompatActivity {
         databaseOrder =  FirebaseDatabase.getInstance().getReference("order");
         feedbacklist = new ArrayList<>();
         listView = (ListView) findViewById(R.id.a_feedback_list);
+        driverid = getIntent().getStringExtra("id");
     }
 
     @Override
@@ -43,28 +44,31 @@ public class FeedbackDisplay extends AppCompatActivity {
 
                 for(DataSnapshot orders: dataSnapshot.getChildren()) {
                     Order order = orders.getValue(Order.class);
-                    feedbacklist.add(order);
+                    if(order.getDriver().getId().equals(driverid)) {
+                        feedbacklist.add(order);
+                    }
 
                 }
 
                 FeedbackList adapter = new FeedbackList(FeedbackDisplay.this,feedbacklist);
                 listView.setAdapter(adapter);
 
-                /*listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        Tracker tracker = retrievalList.get(i);
 
-                        String origin = tracker.getFrom();
-                        String dest = tracker.getTo();
-                        //Toast.makeText(getApplicationContext(),origin+dest,Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(getApplicationContext(),MapsActivity.class);
-                        intent.putExtra("origin",origin);
-                        intent.putExtra("dest",dest);
-                        MapsActivity.flag = 1;
-                        startActivity(intent);
-                    }
-                });*/
+//                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                        Order order = feedbacklist.get(i);
+//
+//                        String id = tracker.getFrom();
+//                        String dest = tracker.getTo();
+//                        //Toast.makeText(getApplicationContext(),origin+dest,Toast.LENGTH_LONG).show();
+//                        Intent intent = new Intent(getApplicationContext(),MapsActivity.class);
+//                        intent.putExtra("origin",origin);
+//                        intent.putExtra("dest",dest);
+//                        MapsActivity.flag = 1;
+//                        startActivity(intent);
+//                    }
+//                });
             }
 
             @Override

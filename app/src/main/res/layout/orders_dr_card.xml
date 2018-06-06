@@ -1,123 +1,270 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <LinearLayout
+
+
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:elevation="5dp"
+        android:layout_margin="10dp">
 
-        <TableLayout
-            android:id="@+id/formLayout"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="102dp">
+            android:layout_height="match_parent">
 
-            <TableRow>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/one">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Customer Name"
-                    android:textStyle="bold" />
+                    android:text="Customer name :"
+                    android:layout_margin="5dp"
+                    style="@style/Base.TextAppearance.AppCompat.Large"/>
 
                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
                     android:id="@+id/customername"
+                    android:text="Name "
+                    style="@style/Base.TextAppearance.AppCompat.Large"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/two"
+                android:layout_below="@+id/one">
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dip"
-                    android:layout_weight="1"
-                    android:paddingLeft="5dip"
-                    android:textColor="@android:color/holo_blue_bright" />
-            </TableRow>
-
-
-            <TableRow>
+                    android:text="Phone :"
+                    android:layout_margin="5dp"
+                    style="@style/Base.TextAppearance.AppCompat.Large"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Phone Number"
-                    android:textStyle="bold" />
-
-                <TextView
+                    android:layout_margin="5dp"
                     android:id="@+id/phonenumber"
+                    android:text="Phone "
+                    style="@style/Base.TextAppearance.AppCompat.Large"/>
+
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/four"
+                android:layout_below="@+id/two">
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dip"
-                    android:layout_weight="1"
-                    android:paddingLeft="5dip"
-                    android:textColor="@android:color/holo_blue_dark" />
-            </TableRow>
-
-
-
-            <TableRow>
+                    android:text="Status :"
+                    android:layout_margin="5dp"
+                    style="@style/Base.TextAppearance.AppCompat.Large"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Status"
-                    android:textStyle="bold" />
-
-                <TextView
+                    android:layout_margin="5dp"
                     android:id="@+id/status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dip"
-                    android:layout_weight="1"
-                    android:inputType="number"
-                    android:paddingLeft="5dip"
-                    android:textColor="@android:color/holo_blue_dark" />
-            </TableRow>
-            <TableRow>
+                    android:text="status "
+                    style="@style/Base.TextAppearance.AppCompat.Large"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/five"
+                android:layout_below="@+id/four">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Feedback"
-                    android:textColor="@android:color/holo_blue_dark"
-                    android:textStyle="bold" />
+                    android:text="Feedback :"
+                    android:layout_margin="5dp"
+                    style="@style/Base.TextAppearance.AppCompat.Large"/>
 
                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
                     android:id="@+id/feedback"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dip"
-                    android:layout_weight="1"
-                    android:inputType="number"
-                    android:paddingLeft="5dip"
-                    android:textColor="@android:color/holo_blue_dark" />
-            </TableRow>
+                    android:text="No feedback "
+                    style="@style/Base.TextAppearance.AppCompat.Large"/>
 
-            <TableRow>
+            </LinearLayout>
 
-               <Button
-                   android:id="@+id/accept"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:text="Accept">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/six"
+                android:layout_below="@+id/five">
 
-               </Button>
                 <Button
-                    android:id="@+id/deny"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Deny">
+                android:id="@+id/accept"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Accept"
+                    android:layout_margin="5dp"    >
 
                 </Button>
                 <Button
-                    android:id="@+id/complete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Complete"
-                    android:visibility="gone">
+                android:id="@+id/deny"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Deny"
+                    android:layout_margin="5dp">
 
                 </Button>
-            </TableRow>
+                <Button
+                android:id="@+id/complete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                android:text="Complete"
+                android:visibility="gone">
 
-        </TableLayout>
-    </LinearLayout>
+                </Button>
 
-</FrameLayout>
+            </LinearLayout>
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
+
+        <!--<TableLayout-->
+            <!--android:id="@+id/formLayout"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:layout_marginTop="102dp">-->
+
+            <!--<TableRow>-->
+
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="Customer Name"-->
+                    <!--android:textStyle="bold" />-->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/customername"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginLeft="5dip"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:paddingLeft="5dip"-->
+                    <!--android:textColor="@android:color/holo_blue_bright" />-->
+            <!--</TableRow>-->
+
+
+            <!--<TableRow>-->
+
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="Phone Number"-->
+                    <!--android:textStyle="bold" />-->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/phonenumber"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginLeft="5dip"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:paddingLeft="5dip"-->
+                    <!--android:textColor="@android:color/holo_blue_dark" />-->
+            <!--</TableRow>-->
+
+
+
+            <!--<TableRow>-->
+
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="Status"-->
+                    <!--android:textStyle="bold" />-->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/status"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginLeft="5dip"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:inputType="number"-->
+                    <!--android:paddingLeft="5dip"-->
+                    <!--android:textColor="@android:color/holo_blue_dark" />-->
+            <!--</TableRow>-->
+            <!--<TableRow>-->
+
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="Feedback"-->
+                    <!--android:textColor="@android:color/holo_blue_dark"-->
+                    <!--android:textStyle="bold" />-->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/feedback"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_marginLeft="5dip"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:inputType="number"-->
+                    <!--android:paddingLeft="5dip"-->
+                    <!--android:textColor="@android:color/holo_blue_dark" />-->
+            <!--</TableRow>-->
+
+            <!--<TableRow>-->
+
+               <!--<Button-->
+                   <!--android:id="@+id/accept"-->
+                   <!--android:layout_width="wrap_content"-->
+                   <!--android:layout_height="wrap_content"-->
+                   <!--android:text="Accept">-->
+
+               <!--</Button>-->
+                <!--<Button-->
+                    <!--android:id="@+id/deny"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="Deny">-->
+
+                <!--</Button>-->
+                <!--<Button-->
+                    <!--android:id="@+id/complete"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="Complete"-->
+                    <!--android:visibility="gone">-->
+
+                <!--</Button>-->
+            <!--</TableRow>-->
+
+        <!--</TableLayout>-->
+    <!--</LinearLayout>-->
+
+</RelativeLayout>

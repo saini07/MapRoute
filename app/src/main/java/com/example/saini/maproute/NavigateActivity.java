@@ -65,12 +65,23 @@ public class NavigateActivity extends AppCompatActivity
 
         switch(id) {
             case R.id.home:
+                MapsActivity.view_map = 0;
+                Intent h = new Intent(getApplicationContext(),MapsActivity.class);
+                startActivity(h);
                 Toast.makeText(getApplicationContext(),"home",Toast.LENGTH_LONG).show();
                 break;
+
+            case R.id.view_maps:
+                MapsActivity.view_map = 1;
+                Intent vm = new Intent(getApplicationContext(),MapsActivity.class);
+                startActivity(vm);
+                Toast.makeText(getApplicationContext(),"view Maps",Toast.LENGTH_LONG).show();
+                break;
+
             case R.id.place_order_cus:
 
                 String ide= databaseOrder.push().getKey();
-                Order order = new Order(UserActivity.customer,ide);
+                Order order = new Order(MapsActivity.customer,ide);
                 databaseOrder.child(ide).setValue(order);
                 Toast.makeText(getApplicationContext(),"Placed order",Toast.LENGTH_LONG).show();
                 break;
