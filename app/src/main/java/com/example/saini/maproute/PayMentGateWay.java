@@ -89,8 +89,8 @@ public class PayMentGateWay extends Activity {
         getNumber       = oIntent.getExtras().getString("PHONE_NUMBER");
         getEmailAddress = oIntent.getExtras().getString("EMAIL_ADDRESS");
         getRechargeAmt  = oIntent.getExtras().getString("RECHARGE_AMT");
-        end_lat = oIntent.getExtras().getDouble("end_lat");
-        end_long = oIntent.getExtras().getDouble("end_long");
+        end_lat = oIntent.getExtras().getDouble("LATITUDE");
+        end_long = oIntent.getExtras().getDouble("LONGITUDE");
 
 
         //post_val = getIntent().getStringArrayListExtra("post_val");

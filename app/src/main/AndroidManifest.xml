@@ -72,7 +72,7 @@
         <activity android:name=".DriverSelection" />
         <activity android:name=".ViewTripsA" />
         <activity android:name=".PaymentActivity" />
-
+        <activity android:name=".PayMentGateWay"/>
     </application>
 
 </manifest>

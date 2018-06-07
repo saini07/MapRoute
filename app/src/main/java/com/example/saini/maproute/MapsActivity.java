@@ -18,14 +18,18 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Layout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -60,6 +64,7 @@ import java.util.List;
 import java.util.Map;
 
 
+import static android.location.Location.distanceBetween;
 import static com.example.saini.maproute.FirstActivity.user;
 //import static com.example.saini.maproute.UserActivity.driver;
 import static com.example.saini.maproute.UserActivity.isUser;
@@ -104,6 +109,10 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
     Map<String,Customer> customer_info;
     Map<String,ArrayList<LatLng>> customer_movement;
     public static int view_map = 0;
+    LinearLayout third;
+    ToggleButton toggleButton;
+    int availableFlag = 0;
+    int state = 0;
 
 
     @Override
@@ -129,11 +138,17 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
             Toast.makeText(getApplicationContext(),"Provide GPS location ",Toast.LENGTH_LONG).show();
             finish();
         }
-        else{
 
+        third = (LinearLayout) findViewById(R.id.third);
+        if(user == 2) {
+            third.setVisibility(View.VISIBLE);
+        }
+        else {
+            third.setVisibility(View.GONE);
         }
 
-        startService();
+
+
         Log.e(TAG,"n create");
         databaseTracker = FirebaseDatabase.getInstance().getReference("track");
         databaseDriver = FirebaseDatabase.getInstance().getReference("Driver");
@@ -176,6 +191,43 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
         search = (Button) findViewById(R.id.search);
         history = (Button) findViewById(R.id.history);
 
+        toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
+        toggleButton.setChecked(true);
+
+        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    databaseDriver.child(driver.getId()).child("isavailable").setValue("true");
+                }
+                else{
+                    databaseOrder.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for(DataSnapshot Orders : dataSnapshot.getChildren()) {
+                                Order temp_order = Orders.getValue(Order.class);
+                                if(temp_order.getStatus().equals("processing")&&temp_order.getDriver().getId().equals(driver.getId())) {
+                                    Toast.makeText(getApplicationContext(),"Ongoing order",Toast.LENGTH_LONG).show();
+                                    toggleButton.setChecked(true);
+                                    availableFlag = 1;
+                                    break;
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+                    if(availableFlag==0) {
+                        databaseDriver.child(driver.getId()).child("isavailable").setValue("false");
+                    }
+                }
+            }
+        });
+
 
         if(view_map==1){
 
@@ -210,20 +262,31 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+        state =1;
+        startService();
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
+        state = 0;
         stopService(new Intent(this, MyService.class));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        state = 1;
         startService();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        state = 0;
         stopService(new Intent(this, MyService.class));
 
     }
@@ -488,21 +551,22 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
         if (permission == PackageManager.PERMISSION_GRANTED) {
             // Request location updates and when an update is
             // received, store the location in Firebase
-            client.requestLocationUpdates(request, new LocationCallback() {
-                @Override
-                public void onLocationResult(LocationResult locationResult) {
+            if(state == 1) {
+                client.requestLocationUpdates(request, new LocationCallback() {
+                    @Override
+                    public void onLocationResult(LocationResult locationResult) {
 
-                    Log.e(TAG,"request location updates");
-                    Location location = locationResult.getLastLocation();
-                    if (location != null) {
-                           // mMap.clear();
-                        lastLocation = location;
-                        if(currentLocationMarker!=null) {
-                            currentLocationMarker.remove();
-                        }
+                        Log.e(TAG, "request location updates");
+                        Location location = locationResult.getLastLocation();
+                        if (location != null) {
+                            // mMap.clear();
+                            lastLocation = location;
+                            if (currentLocationMarker != null) {
+                                currentLocationMarker.remove();
+                            }
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
-                            LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
+                            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                             //Toast.makeText(getApplicationContext()," "+location.getLatitude()+" "+location.getLongitude(),Toast.LENGTH_LONG).show();
                             MarkerOptions mark = new MarkerOptions();
                             mark.position(latLng);
@@ -511,21 +575,22 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
                             currentLocationMarker = mMap.addMarker(mark);
                             points.add(latLng);
 
-                        Log.e(TAG, "location update " + location);
+                            Log.e(TAG, "location update " + location);
 
 
-                        //redrawLine();
+                            //redrawLine();
 
+
+                        }
+                        if (view_map == 1) {
+                            check();
+                        }
 
 
                     }
-                    if(view_map == 1) {
-                        check();
-                    }
+                }, null);
+            }
 
-
-                }
-            }, null);
         }
     }
 
@@ -780,22 +845,27 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
                         t_longitude = point.longitude;
                     }
                     latLng = new LatLng(t_latitude, t_longitude);
-                    markerOptions.position(latLng);
-                    BitmapDescriptor temp_icon;
-                    temp_icon = BitmapDescriptorFactory.fromResource(R.drawable.truck);
-                    if (temp_driver != null) {
-                        Log.e(TAG, " info " + temp_driver.getDriver_name() + temp_driver.getVehicle_type());
-                        markerOptions.title(temp_driver.getDriver_name());
-                        markerOptions.snippet(temp_driver.getVehicle_type() + " " + temp_driver.getVehicle_no() + " " + temp_driver.getPhone_no());
+                    float[] results=new float[2];
+                    distanceBetween(latitude,longitude,t_latitude,t_longitude,results);
+                   // Toast.makeText(getApplicationContext()," distance "+results[0],Toast.LENGTH_LONG).show();
+                    if((results[0]/1000.0)>15.0) {
+                        markerOptions.position(latLng);
+                        BitmapDescriptor temp_icon;
+                        temp_icon = BitmapDescriptorFactory.fromResource(R.drawable.truck);
+                        if (temp_driver != null) {
+                            Log.e(TAG, " info " + temp_driver.getDriver_name() + temp_driver.getVehicle_type());
+                            markerOptions.title(temp_driver.getDriver_name());
+                            markerOptions.snippet(temp_driver.getVehicle_type() + " " + temp_driver.getVehicle_no() + " " + temp_driver.getPhone_no());
 
-                        if (temp_driver.getVehicle_type() == "Truck") {
-                            temp_icon = BitmapDescriptorFactory.fromResource(R.drawable.truck);
-                        } else {
-                            temp_icon = BitmapDescriptorFactory.fromResource(R.drawable.mini_truck);
+                            if (temp_driver.getVehicle_type() == "Truck") {
+                                temp_icon = BitmapDescriptorFactory.fromResource(R.drawable.truck);
+                            } else {
+                                temp_icon = BitmapDescriptorFactory.fromResource(R.drawable.mini_truck);
+                            }
                         }
+                        markerOptions.icon(temp_icon);
+                        mMap.addMarker(markerOptions);
                     }
-                    markerOptions.icon(temp_icon);
-                    mMap.addMarker(markerOptions);
                 }
             }
             else{
@@ -920,8 +990,8 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
             }
-
             requestLocationUpdates();
+
 
         }
 

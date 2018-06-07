@@ -7,6 +7,24 @@ public class Driver {
     String vehicle_no;
     String type = "driver";
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getIsavailable() {
+        return isavailable;
+    }
+
+    public void setIsavailable(String isavailable) {
+        this.isavailable = isavailable;
+    }
+
+    String isavailable = "true";
+
     public String getId() {
         return id;
     }

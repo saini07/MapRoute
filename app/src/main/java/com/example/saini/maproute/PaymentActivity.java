@@ -45,7 +45,7 @@ public class PaymentActivity extends AppCompatActivity {
             @Override
             public void onPlaceSelected(Place place) {
                 // TODO: Get info about the selected place.
-                Log.e("bvshi", "Place: " + place.getName());
+                Log.e("bvshi", "Place: " + place.getLatLng().latitude);
                 end_lat = place.getLatLng().latitude;
                 end_long = place.getLatLng().longitude;
             }

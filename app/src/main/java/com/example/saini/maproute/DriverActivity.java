@@ -94,6 +94,7 @@ public class DriverActivity extends NavigateActivity implements View.OnClickList
                             //firebaseAuth.getUid();
                             driver.setId(firebaseAuth.getUid());
                             databaseDriver.child(firebaseAuth.getUid()).setValue(driver);
+                            MapsActivity.driver = driver;
                             Intent i = new Intent(getApplicationContext(), MapsActivity.class);
                             startActivity(i);
                         } else {

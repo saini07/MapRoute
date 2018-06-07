@@ -72,9 +72,9 @@ public class DriverSelection extends AppCompatActivity {
                 for(DataSnapshot drivers : dataSnapshot.getChildren()) {
                     Driver driver = drivers.getValue(Driver.class);
 
-
-                    driverSelectAdapter.add(driver);
-
+                    if(driver.getIsavailable().equals("true")) {
+                        driverSelectAdapter.add(driver);
+                    }
 
 
                 }
