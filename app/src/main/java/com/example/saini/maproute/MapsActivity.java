@@ -511,6 +511,7 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
 
         if(user==1) {
             //customerPlots();
+
         }
 
         if(user==2) {
