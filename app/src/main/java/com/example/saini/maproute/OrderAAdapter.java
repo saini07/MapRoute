@@ -1,6 +1,7 @@
 package com.example.saini.maproute;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +24,9 @@ public class OrderAAdapter extends ArrayAdapter<OrderDcard> {
     DatabaseReference databaseOrder;
     String id;
     String stat;
+    Context ctx;
     private List<OrderDcard> cardList = new ArrayList<OrderDcard>();
+    public static int driver_seletion_tag =0;
 
     static class CardViewHolder {
         TextView customername;
@@ -32,12 +35,13 @@ public class OrderAAdapter extends ArrayAdapter<OrderDcard> {
         TextView feedback;
         Button accept;
         Button deny;
-        Button complete;
+
 
     }
 
     public OrderAAdapter(@NonNull Context context, int resource) {
         super(context, resource);
+        this.ctx = context;
         databaseOrder = FirebaseDatabase.getInstance().getReference("order");
 
     }
@@ -72,7 +76,7 @@ public class OrderAAdapter extends ArrayAdapter<OrderDcard> {
             viewHolder.feedback = (TextView) row.findViewById(R.id.feedback);
             viewHolder.accept = (Button) row.findViewById(R.id.accept);
             viewHolder.deny = (Button) row.findViewById(R.id.deny);
-            viewHolder.complete = (Button) row.findViewById(R.id.complete);
+
 
             row.setTag(viewHolder);
         } else {
@@ -86,32 +90,30 @@ public class OrderAAdapter extends ArrayAdapter<OrderDcard> {
 
         id = cardList.get(position).getId();
 
-        /*databaseOrder.child(id).child("status").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                stat= dataSnapshot.getValue().toString();
-                if(stat.equals("processing")) {
-                    viewHolder.accept.setVisibility(View.GONE);
-                    viewHolder.deny.setVisibility(View.GONE);
-                    viewHolder.complete.setVisibility(View.VISIBLE);
-                }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });*/
 
 
         viewHolder.accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 id = cardList.get(position).getId();
-                databaseOrder.child(id).child("accepted").setValue("forwarded");
+               // databaseOrder.child(id).child("accepted").setValue("forwarded");
 
-                viewHolder.accept.setVisibility(View.GONE);
-                viewHolder.deny.setVisibility(View.GONE);
+
+
+
+                Intent i = new Intent(getContext(),DriverSelection.class);
+                i.putExtra("id",id);
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                ctx.startActivity(i);
+
+
+
+
+               //viewHolder.accept.setVisibility(View.GONE);
+              //  viewHolder.deny.setVisibility(View.GONE);
 
 
             }
@@ -123,9 +125,10 @@ public class OrderAAdapter extends ArrayAdapter<OrderDcard> {
                 id = cardList.get(position).getId();
                 databaseOrder.child(id).child("accepted").setValue("rejected");
 
-                viewHolder.accept.setVisibility(View.GONE);
-                viewHolder.complete.setVisibility(View.GONE);
-                viewHolder.deny.setVisibility(View.GONE);
+                cardList.clear();
+               // viewHolder.accept.setVisibility(View.GONE);
+
+               //viewHolder.deny.setVisibility(View.GONE);
 
             }
         });

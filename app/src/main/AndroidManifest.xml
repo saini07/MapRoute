@@ -10,6 +10,12 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:allowBackup="true"
@@ -51,21 +57,22 @@
             android:name=".NavigateActivity"
             android:label="@string/title_activity_navigate"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity android:name=".ViewOrdersC" />
         <activity android:name=".ViewTripsD" />
         <activity android:name=".ViewOrdersD" />
         <activity android:name=".ViewOrdersA" />
         <activity android:name=".ViewDriversA" />
-        <activity android:name=".FeedbackDisplay"></activity>
-
-
+        <activity android:name=".FeedbackDisplay" />
 
         <service
             android:name=".MyService"
             android:enabled="true"
-            android:exported="true">
-        </service>
+            android:exported="true" />
+
+        <activity android:name=".DriverSelection" />
+        <activity android:name=".ViewTripsA" />
+        <activity android:name=".PaymentActivity" />
+        <activity android:name = ".PayMentGateWay" />
     </application>
 
 </manifest>

@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ViewOrdersC"
+    tools:context=".DriverSelection"
     android:orientation="vertical">
+
     <include
         android:id="@+id/app_bar"
         layout="@layout/app_bar"/>
@@ -13,7 +14,8 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/cus_order_list">
+
+        android:id="@+id/a_driver_select_list">
 
     </ListView>
 

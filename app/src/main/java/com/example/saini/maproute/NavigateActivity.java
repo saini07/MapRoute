@@ -80,10 +80,9 @@ public class NavigateActivity extends AppCompatActivity
 
             case R.id.place_order_cus:
 
-                String ide= databaseOrder.push().getKey();
-                Order order = new Order(MapsActivity.customer,ide);
-                databaseOrder.child(ide).setValue(order);
-                Toast.makeText(getApplicationContext(),"Placed order",Toast.LENGTH_LONG).show();
+               Intent poc = new Intent(getApplicationContext(),PaymentActivity.class);
+               startActivity(poc);
+                Toast.makeText(getApplicationContext(),"order gets placed after payment",Toast.LENGTH_LONG).show();
                 break;
 
             case R.id.view_order_cus:
@@ -106,6 +105,12 @@ public class NavigateActivity extends AppCompatActivity
                 Intent oa = new Intent(getApplicationContext(),ViewOrdersA.class);
                 startActivity(oa);
                 Toast.makeText(getApplicationContext(),"order details",Toast.LENGTH_LONG).show();
+                break;
+
+            case R.id.trips_admin:
+                Intent ta = new Intent(getApplicationContext(),ViewTripsA.class);
+                startActivity(ta);
+                Toast.makeText(getApplicationContext(),"trips details",Toast.LENGTH_LONG).show();
                 break;
 
             case R.id.orders_driver:

@@ -32,7 +32,7 @@ public class FirstActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 user = 2;
-                Toast.makeText(getApplicationContext()," user login"+user,Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext()," user login"+user,Toast.LENGTH_LONG).show();
                 Intent i = new Intent(getApplicationContext(),UserActivity.class);
                 startActivity(i);
             }
@@ -43,7 +43,7 @@ public class FirstActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 user = 1;
-                Toast.makeText(getApplicationContext()," user "+user,Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext()," user "+user,Toast.LENGTH_LONG).show();
 
                 Intent i = new Intent(getApplicationContext(),UserActivity.class);
                 startActivity(i);
@@ -54,7 +54,7 @@ public class FirstActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 user = 0;
-                Toast.makeText(getApplicationContext()," user "+user,Toast.LENGTH_LONG).show();
+               // Toast.makeText(getApplicationContext()," user "+user,Toast.LENGTH_LONG).show();
 
                 Intent i = new Intent(getApplicationContext(),AdminActivity.class);
                 startActivity(i);

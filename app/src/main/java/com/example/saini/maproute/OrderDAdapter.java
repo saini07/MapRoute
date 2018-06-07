@@ -84,24 +84,17 @@ public class OrderDAdapter extends ArrayAdapter<OrderDcard> {
         viewHolder.status.setText(card.getStatus());
         viewHolder.feedback.setText(card.getFeedback());
 
+
         id = cardList.get(position).getId();
 
-        databaseOrder.child(id).child("status").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-               stat= dataSnapshot.getValue().toString();
-               if(stat.equals("processing")) {
-                   viewHolder.accept.setVisibility(View.GONE);
-                   viewHolder.deny.setVisibility(View.GONE);
-                   viewHolder.complete.setVisibility(View.VISIBLE);
-               }
-            }
+        if(cardList.get(position).getStatus().equals("processing")) {
+            viewHolder.accept.setVisibility(View.GONE);
+            viewHolder.deny.setVisibility(View.GONE);
+            viewHolder.complete.setVisibility(View.VISIBLE);
+        }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+
 
 
         viewHolder.accept.setOnClickListener(new View.OnClickListener() {
@@ -109,7 +102,10 @@ public class OrderDAdapter extends ArrayAdapter<OrderDcard> {
             public void onClick(View v) {
                id = cardList.get(position).getId();
                databaseOrder.child(id).child("status").setValue("processing");
-               databaseOrder.child(id).child("driver").setValue(MapsActivity.driver);
+
+               //databaseOrder.child(id).child("driver").setValue(MapsActivity.driver);
+
+                cardList.clear();
 
                viewHolder.deny.setVisibility(View.GONE);
                viewHolder.complete.setVisibility(View.GONE);
@@ -121,6 +117,10 @@ public class OrderDAdapter extends ArrayAdapter<OrderDcard> {
             @Override
             public void onClick(View v) {
                 id = cardList.get(position).getId();
+                databaseOrder.child(id).child("accepted").setValue("default");
+
+                databaseOrder.child(id).child("driver").setValue(null);
+                cardList.clear();
 
                 viewHolder.accept.setVisibility(View.GONE);
                 viewHolder.complete.setVisibility(View.GONE);
@@ -135,6 +135,7 @@ public class OrderDAdapter extends ArrayAdapter<OrderDcard> {
                 id = cardList.get(position).getId();
 
                 databaseOrder.child(id).child("status").setValue("completed");
+                cardList.clear();
                 viewHolder.complete.setVisibility(View.GONE);
 
             }
@@ -142,4 +143,6 @@ public class OrderDAdapter extends ArrayAdapter<OrderDcard> {
 
         return row;
     }
+
+
 }

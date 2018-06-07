@@ -3,11 +3,13 @@ package com.example.saini.maproute;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -112,6 +114,23 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
             checkLocationPermission();
         }
 
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+
+        LocationManager lm = (LocationManager) getApplicationContext()
+                .getSystemService(Context.LOCATION_SERVICE);
+
+        gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        if(!gps_enabled&&!network_enabled) {
+            Toast.makeText(getApplicationContext(),"Provide GPS location ",Toast.LENGTH_LONG).show();
+            finish();
+        }
+        else{
+
+        }
+
         startService();
         Log.e(TAG,"n create");
         databaseTracker = FirebaseDatabase.getInstance().getReference("track");
@@ -120,7 +139,7 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
         databaseOrder = FirebaseDatabase.getInstance().getReference("order");
 
 
-        Toast.makeText(getApplicationContext()," user "+user,Toast.LENGTH_LONG).show();
+       // Toast.makeText(getApplicationContext()," user "+user,Toast.LENGTH_LONG).show();
 
 
         if(user == 2) {
@@ -249,7 +268,7 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
         if (view.getId() == R.id.search) {
             // LocateVehicles();
             //PointLocators();
-            Toast.makeText(this,"Added",Toast.LENGTH_SHORT).show();
+           //Toast.makeText(this,"Added",Toast.LENGTH_SHORT).show();
 
 
             String origin = loc1.getText().toString();
@@ -265,7 +284,7 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
                 first = null; last = null;
 
 
-                Toast.makeText(this,"Added",Toast.LENGTH_SHORT).show();
+               // Toast.makeText(this,"Added",Toast.LENGTH_SHORT).show();
 
                 Locate(origin,dest);
             }
@@ -354,6 +373,10 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
                     if(ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED) {
                         if(client==null) {
                             buildGoogleApiClient();
+                            Intent intent = new Intent("android.location.GPS_ENABLED_CHANGE");
+                            intent.putExtra("enabled", true);
+                            sendBroadcast(intent);
+
                         }
                         mMap.setMyLocationEnabled(true);
                     }
@@ -393,7 +416,7 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
                 String origin = getIntent().getStringExtra("origin");
                 String dest = getIntent().getStringExtra("dest");
                 Log.e(TAG, "Function called");
-                Toast.makeText(this, "Function called", Toast.LENGTH_LONG).show();
+                //Toast.makeText(this, "Function called", Toast.LENGTH_LONG).show();
                 Locate(origin, dest);
             }
 
@@ -418,9 +441,17 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
         // Functionality coming next step
 
         LocationRequest request = new LocationRequest();
-        request.setInterval(10000);
-        request.setFastestInterval(5000);
+        request.setInterval(1000);
+        request.setFastestInterval(1000);
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+
+
+
+
+
+
+
         FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(this);
         //final String path = getString(R.string.firebase_path) + "/" + getString(R.string.transport_id);
         int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
@@ -443,7 +474,7 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
                             LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-                            Toast.makeText(getApplicationContext()," "+location.getLatitude()+" "+location.getLongitude(),Toast.LENGTH_LONG).show();
+                            //Toast.makeText(getApplicationContext()," "+location.getLatitude()+" "+location.getLongitude(),Toast.LENGTH_LONG).show();
                             MarkerOptions mark = new MarkerOptions();
                             mark.position(latLng);
                             mark.title("You are here");
@@ -452,6 +483,7 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
                             points.add(latLng);
 
                         Log.e(TAG, "location update " + location);
+
 
                         //redrawLine();
 
@@ -471,73 +503,85 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
 
     private void check() {
 
-        Toast.makeText(getApplicationContext(),"user check "+user,Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(),"user check "+user,Toast.LENGTH_LONG).show();
         Log.e(TAG, "user check "+user);
-        if(user==0||user==1) {
-            Log.e(TAG," here in retrieving the initials driver ");
-            databaseDriver.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    for (DataSnapshot drivers : dataSnapshot.getChildren()) {
-
-                        //Log.e(TAG, "sc " + id);
-                        Driver temp_driver = drivers.getValue(Driver.class);
-                        String id = temp_driver.getId();
-                        if (driver_info.containsKey(id)) {
-                            ArrayList<LatLng> list = driver_movement.get(id);
-                            list.add(new LatLng(temp_driver.getLatitude(), temp_driver.getLongitude()));
-                            driver_movement.put(id, list);
-                        } else {
-                            driver_info.put(id, temp_driver);
-                            ArrayList<LatLng> list = new ArrayList<>();
-                            list.add(new LatLng(temp_driver.getLatitude(), temp_driver.getLongitude()));
-                            driver_movement.put(id, list);
-                        }
-                    }
-                    redrawLine();
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-
-        }
         if(user==0) {
-            Log.e(TAG," here in retrieving the initials customer");
+           adminPlots();
+        }
 
-            databaseCustomer.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for(DataSnapshot customers : dataSnapshot.getChildren()) {
-                        Customer temp_customer = dataSnapshot.getValue(Customer.class);
-                        String id = temp_customer.getId();
-                        if (customer_info.containsKey(id)) {
-                            ArrayList<LatLng> list = customer_movement.get(id);
-                            list.add(new LatLng(temp_customer.getLatitude(), temp_customer.getLongitude()));
-                            customer_movement.put(id, list);
-                        } else {
-                            customer_info.put(id, temp_customer);
-                            ArrayList<LatLng> list = new ArrayList<>();
-                            list.add(new LatLng(temp_customer.getLatitude(), temp_customer.getLongitude()));
-                            customer_movement.put(id, list);
-                        }
-                    }
-                    redrawLine();
-                }
+        if(user==1) {
+            //customerPlots();
+        }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
+        if(user==2) {
+           // driverPlots();
         }
 
 
+    }
+
+
+
+
+
+    private void adminPlots () {
+        Log.e(TAG," here in retrieving the initials driver ");
+        databaseDriver.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot drivers : dataSnapshot.getChildren()) {
+
+                    //Log.e(TAG, "sc " + id);
+                    Driver temp_driver = drivers.getValue(Driver.class);
+                    String id = temp_driver.getId();
+                    if (driver_info.containsKey(id)) {
+                        ArrayList<LatLng> list = driver_movement.get(id);
+                        list.add(new LatLng(temp_driver.getLatitude(), temp_driver.getLongitude()));
+                        driver_movement.put(id, list);
+                    } else {
+                        driver_info.put(id, temp_driver);
+                        ArrayList<LatLng> list = new ArrayList<>();
+                        list.add(new LatLng(temp_driver.getLatitude(), temp_driver.getLongitude()));
+                        driver_movement.put(id, list);
+                    }
+                }
+                redrawLine();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        Log.e(TAG," here in retrieving the initials customer");
+
+        databaseCustomer.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot customers : dataSnapshot.getChildren()) {
+                    Customer temp_customer = dataSnapshot.getValue(Customer.class);
+                    String id = temp_customer.getId();
+                    if (customer_info.containsKey(id)) {
+                        ArrayList<LatLng> list = customer_movement.get(id);
+                        list.add(new LatLng(temp_customer.getLatitude(), temp_customer.getLongitude()));
+                        customer_movement.put(id, list);
+                    } else {
+                        customer_info.put(id, temp_customer);
+                        ArrayList<LatLng> list = new ArrayList<>();
+                        list.add(new LatLng(temp_customer.getLatitude(), temp_customer.getLongitude()));
+                        customer_movement.put(id, list);
+                    }
+                }
+                redrawLine();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 

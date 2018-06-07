@@ -3,6 +3,7 @@ package com.example.saini.maproute;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -21,6 +22,7 @@ public class History extends AppCompatActivity {
     ListView listView;
     DatabaseReference databaseReference;
     List<Tracker> retrievalList;
+    Toolbar toolbar;
 
 
     @Override
@@ -30,6 +32,18 @@ public class History extends AppCompatActivity {
         databaseReference =  FirebaseDatabase.getInstance().getReference("track");
         retrievalList = new ArrayList<>();
         listView = (ListView) findViewById(R.id.listViewTrack);
+        toolbar = (Toolbar) findViewById(R.id.app_bar);
+        toolbar.setTitle("History");
+        toolbar.setTitleTextColor(android.graphics.Color.WHITE);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        setSupportActionBar(toolbar);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
     }
 
     @Override

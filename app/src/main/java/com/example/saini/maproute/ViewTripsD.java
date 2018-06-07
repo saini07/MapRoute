@@ -2,6 +2,7 @@ package com.example.saini.maproute;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ListView;
 
@@ -17,6 +18,7 @@ public class ViewTripsD extends AppCompatActivity {
     private TripDAdapter tripDAdapter;
     private ListView listView;
     DatabaseReference databaseOrders;
+    Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,10 +28,36 @@ public class ViewTripsD extends AppCompatActivity {
         listView.addHeaderView(new View(this));
         listView.addFooterView(new View(this));
 
-        tripDAdapter = new TripDAdapter(getApplicationContext(), R.layout.trips_dr_card);
+
+        toolbar = (Toolbar) findViewById(R.id.app_bar);
+        toolbar.setTitle("Trips");
+        toolbar.setTitleTextColor(android.graphics.Color.WHITE);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        setSupportActionBar(toolbar);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
         databaseOrders = FirebaseDatabase.getInstance().getReference("order");
 
+
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        tripDAdapter = new TripDAdapter(getApplicationContext(), R.layout.trips_dr_card);
+        reload();
+
+    }
+
+    private void reload() {
         databaseOrders.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -40,19 +68,19 @@ public class ViewTripsD extends AppCompatActivity {
 
                     if(order.getStatus().equals("processing")|| order.getStatus().equals("completed"))
 
-                    if(temp_driver.getId().equals(MapsActivity.driver.getId())) {
-                        OrderCard orderCard;
-                        String fd = "";
-                        if(order.getFeedback()==null) {
-                            orderCard = new OrderCard(temp_cus.getCus_name(),Long.toString(temp_cus.getPhone()),Long.toString(temp_driver.getLoads()),order.getStatus(),fd,order.getId());
-                        }
-                        else {
-                            fd  =order.getFeedback();
-                            orderCard = new OrderCard(temp_cus.getCus_name(),Long.toString(temp_cus.getPhone()),Long.toString(temp_driver.getLoads()),order.getStatus(),fd,order.getId());
-                        }
+                        if(temp_driver.getId().equals(MapsActivity.driver.getId())) {
+                            OrderCard orderCard;
+                            String fd = "";
+                            if(order.getFeedback()==null) {
+                                orderCard = new OrderCard(temp_cus.getCus_name(),Long.toString(temp_cus.getPhone()),Long.toString(temp_driver.getLoads()),order.getStatus(),fd,order.getId());
+                            }
+                            else {
+                                fd  =order.getFeedback();
+                                orderCard = new OrderCard(temp_cus.getCus_name(),Long.toString(temp_cus.getPhone()),Long.toString(temp_driver.getLoads()),order.getStatus(),fd,order.getId());
+                            }
 
-                        tripDAdapter.add(orderCard);
-                    }
+                            tripDAdapter.add(orderCard);
+                        }
 
                 }
 
@@ -64,7 +92,6 @@ public class ViewTripsD extends AppCompatActivity {
 
             }
         });
-
 
     }
     }

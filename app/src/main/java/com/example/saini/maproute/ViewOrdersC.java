@@ -2,6 +2,7 @@ package com.example.saini.maproute;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ListView;
 
@@ -16,6 +17,7 @@ public class ViewOrdersC extends AppCompatActivity {
     private OrderCusAdapter orderCusAdapter;
     private ListView listView;
     DatabaseReference databaseOrders;
+    Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,10 +27,34 @@ public class ViewOrdersC extends AppCompatActivity {
         listView.addHeaderView(new View(this));
         listView.addFooterView(new View(this));
 
-        orderCusAdapter = new OrderCusAdapter(getApplicationContext(), R.layout.orders_cus_card);
+        toolbar = (Toolbar) findViewById(R.id.app_bar);
+        toolbar.setTitle("Orders");
+        toolbar.setTitleTextColor(android.graphics.Color.WHITE);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        setSupportActionBar(toolbar);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
         databaseOrders = FirebaseDatabase.getInstance().getReference("order");
 
+
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        orderCusAdapter = new OrderCusAdapter(getApplicationContext(), R.layout.orders_cus_card);
+        reload();
+    }
+
+    private void reload() {
         databaseOrders.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -36,7 +62,7 @@ public class ViewOrdersC extends AppCompatActivity {
                     Order order = orders.getValue(Order.class);
                     Driver temp_driver = order.getDriver();
                     Customer temp_cus = order.getCustomer();
-                    if (order.getAccepted().equals("forwarded") && (order.getStatus().equals("processing") || order.getStatus().equals("completed"))) {
+                    if (order.getAccepted().equals("forwarded")) {
 
                         if (temp_cus.getId().equals(MapsActivity.customer.getId())) {
                             OrderCard orderCard;
@@ -62,7 +88,5 @@ public class ViewOrdersC extends AppCompatActivity {
 
             }
         });
-
-
     }
 }

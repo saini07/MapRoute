@@ -15,6 +15,9 @@
             android:id="@+id/orders_admin"
             android:title="Order Details" />
         <item
+            android:id="@+id/trips_admin"
+            android:title="Trips Details" />
+        <item
             android:id="@+id/signout"
             android:title="Signout" />
     </group>

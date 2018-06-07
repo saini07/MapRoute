@@ -12,17 +12,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class ViewDriversA extends AppCompatActivity {
-    private DriverAAdapter driverAAdapter;
+public class DriverSelection extends AppCompatActivity {
+
+    private DriverSelectAdapter driverSelectAdapter;
     private ListView listView;
+    private String orderid;
     Toolbar toolbar;
 
     DatabaseReference databaseDrivers;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_drivers_a);
-        listView = (ListView) findViewById(R.id.a_driver_list);
+        setContentView(R.layout.activity_driver_selection);
+        listView = (ListView) findViewById(R.id.a_driver_select_list);
 
         listView.addHeaderView(new View(this));
         listView.addFooterView(new View(this));
@@ -40,6 +42,7 @@ public class ViewDriversA extends AppCompatActivity {
             }
         });
 
+        orderid = getIntent().getStringExtra("id");
 
 
 
@@ -51,9 +54,14 @@ public class ViewDriversA extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-        driverAAdapter = new DriverAAdapter(getApplicationContext(), R.layout.drivers_a_card);
+        driverSelectAdapter = new DriverSelectAdapter(getApplicationContext(), R.layout.driver_select_a,orderid);
         reload();
     }
 
@@ -65,13 +73,13 @@ public class ViewDriversA extends AppCompatActivity {
                     Driver driver = drivers.getValue(Driver.class);
 
 
-                    driverAAdapter.add(driver);
+                    driverSelectAdapter.add(driver);
 
 
 
                 }
 
-                listView.setAdapter(driverAAdapter);
+                listView.setAdapter(driverSelectAdapter);
 
             }
 
