@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bgimg2"
     tools:context=".AdminActivity">
     <LinearLayout
         android:paddingTop="100dp"
@@ -13,7 +12,6 @@
         android:orientation="vertical">
         <EditText
             android:id="@+id/adminid"
-            android:background="@drawable/edittextstyle"
             android:layout_width="300dp"
             android:layout_height="60dp"
             android:hint="Username"
@@ -22,7 +20,6 @@
 
         <EditText
             android:id="@+id/password"
-            android:background="@drawable/edittextstyle"
             android:layout_width="300dp"
             android:layout_height="60dp"
             android:layout_marginTop="30dp"
@@ -33,16 +30,16 @@
 
         <Button
             android:id="@+id/login"
-
             android:layout_width="wrap_content"
             android:layout_height="60dp"
+            android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             android:layout_marginTop="70dp"
-            android:layout_centerHorizontal="true"
-            android:background="@color/colorPrimaryDark"
+            android:background="@drawable/edittextstyle"
             android:text="login"
-            android:textColor="@android:color/background_light"
-            android:textSize="18sp"
+            android:typeface="serif"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="24sp"
             android:textStyle="bold" />
     </LinearLayout>
 </RelativeLayout>

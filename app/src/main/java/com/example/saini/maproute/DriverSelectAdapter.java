@@ -37,7 +37,7 @@ public class DriverSelectAdapter extends ArrayAdapter<Driver> {
         TextView load;
         TextView type;
         Button assign;
-
+        Button request;
     }
 
     public DriverSelectAdapter(@NonNull Context context, int resource,String orderid) {
@@ -77,7 +77,7 @@ public class DriverSelectAdapter extends ArrayAdapter<Driver> {
             viewHolder.load = (TextView) row.findViewById(R.id.load);
             viewHolder.type = (TextView) row.findViewById(R.id.type);
             viewHolder.assign = (Button) row.findViewById(R.id.assign);
-
+            viewHolder.request = (Button) row.findViewById(R.id.request);
 
             row.setTag(viewHolder);
         } else {
@@ -92,13 +92,13 @@ public class DriverSelectAdapter extends ArrayAdapter<Driver> {
         id = cardList.get(position).getId();
 
 
-        viewHolder.assign.setOnClickListener(new View.OnClickListener() {
+        viewHolder.request.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 select_driver = cardList.get(position);
 
-                Toast.makeText(getContext(),"Order ssigned to driver "+ select_driver.getDriver_name(),Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(),"Order request sent  to driver "+ select_driver.getDriver_name(),Toast.LENGTH_LONG).show();
                 databaseOrder.child(orderid).child("driver").setValue(select_driver);
                 databaseOrder.child(orderid).child("accepted").setValue("forwarded");
                 OrderAAdapter.driver_seletion_tag=1;
@@ -109,6 +109,26 @@ public class DriverSelectAdapter extends ArrayAdapter<Driver> {
 
             }
         });
+
+        viewHolder.assign.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                select_driver = cardList.get(position);
+
+                Toast.makeText(getContext(),"Order request sent  to driver "+ select_driver.getDriver_name(),Toast.LENGTH_LONG).show();
+                databaseOrder.child(orderid).child("driver").setValue(select_driver);
+                databaseOrder.child(orderid).child("accepted").setValue("forwarded");
+                databaseOrder.child(orderid).child("status").setValue("processing");
+                OrderAAdapter.driver_seletion_tag=1;
+                //viewHolder.assign.setVisibility(View.GONE);
+
+
+
+
+            }
+        });
+
 
 
 

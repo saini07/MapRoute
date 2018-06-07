@@ -91,6 +91,8 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
     DatabaseReference databaseCustomer;
     DatabaseReference databaseOrder;
     public static int flag = 0;
+    ArrayList<String> check_order_customer ;
+    ArrayList<String> check_order_driver ;
     double latitude,longitude;
    // Map<VehicleInformation,DriverInformation> locator;
     private ArrayList<LatLng> points;
@@ -138,7 +140,8 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
         databaseCustomer = FirebaseDatabase.getInstance().getReference("Customer");
         databaseOrder = FirebaseDatabase.getInstance().getReference("order");
 
-
+        check_order_customer = new ArrayList<String>();
+        check_order_driver = new ArrayList<String>();
        // Toast.makeText(getApplicationContext()," user "+user,Toast.LENGTH_LONG).show();
 
 
@@ -206,6 +209,32 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopService(new Intent(this, MyService.class));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startService();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopService(new Intent(this, MyService.class));
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService(new Intent(this, MyService.class));
+
+    }
+
     private void startService() {
         startService(new Intent(this, MyService.class));
        // finish();
@@ -214,7 +243,7 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
     private void init() {
 
         Log.e(TAG," sekbhi init ");
-        if (user != 2) {
+
             databaseDriver.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -236,10 +265,10 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
 
             Log.e(TAG, "initials added");
 
-        }
 
 
-        if(user == 0) {
+
+
             databaseCustomer.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -261,7 +290,7 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
 
             Log.e(TAG, "initials added");
 
-        }
+
     }
 
     public void onClick(View view) {
@@ -442,7 +471,7 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
 
         LocationRequest request = new LocationRequest();
         request.setInterval(1000);
-        request.setFastestInterval(1000);
+        request.setFastestInterval(5000);
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
 
@@ -510,23 +539,86 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
         }
 
         if(user==1) {
-            //customerPlots();
-  //sevd
+
+            check_order_customer.clear();
+            checkOrdersCustomer();
+
+
+
         }
 
         if(user==2) {
-           // driverPlots();
+            Log.e(TAG,"list cleared");
+
+            Log.e(TAG,"driver login "+driver.getId());
+            check_order_driver.clear();
+            checkOrdersDriver();
+
+
+
+
         }
+
+
+    }
+
+    private void checkOrdersCustomer() {
+
+
+
+           databaseOrder.addValueEventListener(new ValueEventListener() {
+               @Override
+               public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                   for(DataSnapshot orders : dataSnapshot.getChildren()) {
+                       Order temp_order = orders.getValue(Order.class);
+                       if((temp_order.getStatus().equals("processing"))&&temp_order.getAccepted().equals("forwarded")&&temp_order.getCustomer().getId().equals(customer.getId())) {
+                           check_order_customer.add(temp_order.getDriver().getId());
+                       }
+                   }
+                   adminPlots();
+               }
+
+               @Override
+               public void onCancelled(DatabaseError databaseError) {
+
+               }
+           });
+
+
+    }
+
+    private void checkOrdersDriver() {
+        Log.e(TAG,"check orders driver");
+
+        databaseOrder.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                    //check_order_driver.clear();
+                for(DataSnapshot orders : dataSnapshot.getChildren()) {
+                    Order temp_order = orders.getValue(Order.class);
+                    if((temp_order.getStatus().equals("processing"))&&temp_order.getAccepted().equals("forwarded")&&temp_order.getDriver().getId().equals(driver.getId())) {
+                        check_order_driver.add(temp_order.getCustomer().getId());
+                    }
+                }
+                adminPlots();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
 
     }
 
 
 
-
-
     private void adminPlots () {
         Log.e(TAG," here in retrieving the initials driver ");
+        Log.e(TAG," checkOrderDriver"+check_order_driver.size());
         databaseDriver.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -583,6 +675,8 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
 
             }
         });
+
+
     }
 
 
@@ -605,10 +699,10 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
         Log.e(TAG,"Adding redrawing marker");
         mMap.addMarker(markerOptions);
 
-        if(user == 2) return;
 
-        if(user == 0||user==1) {
-            Log.e(TAG, "driver Movement"+driver_movement.size());
+
+        if(user == 0) {
+            Log.e(TAG, "driver Movement" + driver_movement.size());
             for (Map.Entry<String, ArrayList<LatLng>> entry : driver_movement.entrySet()) {
                 String id = entry.getKey();
                 Driver temp_driver = driver_info.get(id);
@@ -625,7 +719,7 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
                 markerOptions.position(latLng);
                 BitmapDescriptor temp_icon;
                 temp_icon = BitmapDescriptorFactory.fromResource(R.drawable.truck);
-                if(temp_driver!=null) {
+                if (temp_driver != null) {
                     Log.e(TAG, " info " + temp_driver.getDriver_name() + temp_driver.getVehicle_type());
                     markerOptions.title(temp_driver.getDriver_name());
                     markerOptions.snippet(temp_driver.getVehicle_type() + " " + temp_driver.getVehicle_no() + " " + temp_driver.getPhone_no());
@@ -639,9 +733,9 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
                 markerOptions.icon(temp_icon);
                 mMap.addMarker(markerOptions);
             }
-        }
-        if(user==0) {
-            Log.e(TAG, "customer Movement"+customer_movement.size());
+
+
+            Log.e(TAG, "customer Movement" + customer_movement.size());
             for (Map.Entry<String, ArrayList<LatLng>> entry : customer_movement.entrySet()) {
                 String id = entry.getKey();
                 Customer temp_customer = customer_info.get(id);
@@ -657,11 +751,11 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
                 latLng = new LatLng(t_latitude, t_longitude);
                 markerOptions.position(latLng);
                 BitmapDescriptor temp_icon;
-                temp_icon =  BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+                temp_icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
                 //if(temp_customer!=null) {
-                    Log.e(TAG, " info " + temp_customer.getCus_name() + temp_customer.getType());
-                    markerOptions.title(temp_customer.getCus_name());
-                    markerOptions.snippet(" "+temp_customer.getPhone());
+                Log.e(TAG, " info " + temp_customer.getCus_name() + temp_customer.getType());
+                markerOptions.title(temp_customer.getCus_name());
+                markerOptions.snippet(" " + temp_customer.getPhone());
 
 
                 //}
@@ -669,6 +763,118 @@ public class MapsActivity extends NavigateActivity implements OnMapReadyCallback
                 mMap.addMarker(markerOptions);
             }
         }
+
+        else if(user ==1) {
+            if(check_order_customer.size()==0) {
+                Log.e(TAG, "driver Movement" + driver_movement.size());
+                for (Map.Entry<String, ArrayList<LatLng>> entry : driver_movement.entrySet()) {
+                    String id = entry.getKey();
+                    Driver temp_driver = driver_info.get(id);
+                    double t_latitude = 0.0, t_longitude = 0.0;
+                    PolylineOptions temp_options = new PolylineOptions().width(5).geodesic(true);
+                    ArrayList<LatLng> temp_points = driver_movement.get(id);
+                    for (int i = 0; i < temp_points.size(); i++) {
+                        LatLng point = temp_points.get(i);
+                        temp_options.add(point);
+                        t_latitude = point.latitude;
+                        t_longitude = point.longitude;
+                    }
+                    latLng = new LatLng(t_latitude, t_longitude);
+                    markerOptions.position(latLng);
+                    BitmapDescriptor temp_icon;
+                    temp_icon = BitmapDescriptorFactory.fromResource(R.drawable.truck);
+                    if (temp_driver != null) {
+                        Log.e(TAG, " info " + temp_driver.getDriver_name() + temp_driver.getVehicle_type());
+                        markerOptions.title(temp_driver.getDriver_name());
+                        markerOptions.snippet(temp_driver.getVehicle_type() + " " + temp_driver.getVehicle_no() + " " + temp_driver.getPhone_no());
+
+                        if (temp_driver.getVehicle_type() == "Truck") {
+                            temp_icon = BitmapDescriptorFactory.fromResource(R.drawable.truck);
+                        } else {
+                            temp_icon = BitmapDescriptorFactory.fromResource(R.drawable.mini_truck);
+                        }
+                    }
+                    markerOptions.icon(temp_icon);
+                    mMap.addMarker(markerOptions);
+                }
+            }
+            else{
+                Log.e(TAG, "driver Movement" + driver_movement.size());
+                for (Map.Entry<String, ArrayList<LatLng>> entry : driver_movement.entrySet()) {
+                    String id = entry.getKey();
+                    Driver temp_driver = driver_info.get(id);
+                    double t_latitude = 0.0, t_longitude = 0.0;
+                    if (check_order_customer.contains(id)) {
+                        PolylineOptions temp_options = new PolylineOptions().width(5).geodesic(true);
+                        ArrayList<LatLng> temp_points = driver_movement.get(id);
+                        for (int i = 0; i < temp_points.size(); i++) {
+                            LatLng point = temp_points.get(i);
+                            temp_options.add(point);
+                            t_latitude = point.latitude;
+                            t_longitude = point.longitude;
+                        }
+                        latLng = new LatLng(t_latitude, t_longitude);
+                        markerOptions.position(latLng);
+                        BitmapDescriptor temp_icon;
+                        temp_icon = BitmapDescriptorFactory.fromResource(R.drawable.truck);
+                        if (temp_driver != null) {
+                            Log.e(TAG, " info " + temp_driver.getDriver_name() + temp_driver.getVehicle_type());
+                            markerOptions.title(temp_driver.getDriver_name());
+                            markerOptions.snippet(temp_driver.getVehicle_type() + " " + temp_driver.getVehicle_no() + " " + temp_driver.getPhone_no());
+
+                            if (temp_driver.getVehicle_type() == "Truck") {
+                                temp_icon = BitmapDescriptorFactory.fromResource(R.drawable.truck);
+                            } else {
+                                temp_icon = BitmapDescriptorFactory.fromResource(R.drawable.mini_truck);
+                            }
+                        }
+                        markerOptions.icon(temp_icon);
+                        mMap.addMarker(markerOptions);
+                    }
+                }
+            }
+        }
+
+        else if(user == 2) {
+            Toast.makeText(getApplicationContext(),"check order driver "+check_order_driver.size(),Toast.LENGTH_LONG).show();
+            if(check_order_driver.size()!=0) {
+
+                Log.e(TAG,"redraawing lines");
+
+                Log.e(TAG, "customer Movement" + customer_movement.get(0));
+                for (Map.Entry<String, ArrayList<LatLng>> entry : customer_movement.entrySet()) {
+                    String id = entry.getKey();
+                    Log.e(TAG,"while redrawing "+id + " "+check_order_driver.get(0));
+                    if (check_order_driver.contains(id)) {
+                        Customer temp_customer = customer_info.get(id);
+                        double t_latitude = 0.0, t_longitude = 0.0;
+                        PolylineOptions temp_options = new PolylineOptions().width(5).geodesic(true);
+                        ArrayList<LatLng> temp_points = customer_movement.get(id);
+                        for (int i = 0; i < temp_points.size(); i++) {
+                            LatLng point = temp_points.get(i);
+                            temp_options.add(point);
+                            t_latitude = point.latitude;
+                            t_longitude = point.longitude;
+                        }
+                        latLng = new LatLng(t_latitude, t_longitude);
+                        markerOptions.position(latLng);
+                        BitmapDescriptor temp_icon;
+                        temp_icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+                        //if(temp_customer!=null) {
+                        Log.e(TAG, " info " + temp_customer.getCus_name() + temp_customer.getType());
+                        markerOptions.title(temp_customer.getCus_name());
+                        markerOptions.snippet(" " + temp_customer.getPhone());
+
+
+                        //}
+                        markerOptions.icon(temp_icon);
+                        mMap.addMarker(markerOptions);
+                    }
+                }
+            }
+        }
+
+
         //line = mMap.addPolyline(options);
     }
 

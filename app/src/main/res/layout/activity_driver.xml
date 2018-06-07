@@ -9,7 +9,6 @@
 
 
 
-
     <EditText
         android:id="@+id/driver_name"
         android:layout_width="218dp"
@@ -154,10 +153,11 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:background="?attr/colorPrimaryDark"
+        android:background="@drawable/edittextstyle"
         android:text="Submit"
-        android:textColor="@android:color/background_light"
-        android:textSize="14sp"
+        android:typeface="serif"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

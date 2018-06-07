@@ -10,6 +10,15 @@
         android:id="@+id/First"
         android:orientation="horizontal">
 
+
+        <!--<fragment-->
+            <!--android:id="@+id/loc1"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:tag="Enter first location"-->
+            <!--class="com.google.android.gms.location.places.ui.SupportPlaceAutocompleteFragment"-->
+            <!--/>-->
         <EditText
             android:id="@+id/loc1"
             android:layout_width="0dp"
@@ -31,6 +40,7 @@
         android:id="@+id/Second"
         android:layout_below="@+id/First"
         android:orientation="horizontal">
+
         <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -53,7 +63,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/map"
         android:layout_below="@+id/Second"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+        class="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MapsActivity" />

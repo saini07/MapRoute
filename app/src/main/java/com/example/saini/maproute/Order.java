@@ -4,6 +4,23 @@ public class Order {
 
     private Customer customer;
     private String status = "pending";
+    private double endLatitude=0.0,endLongitude = 0.0;
+
+    public double getEndLatitude() {
+        return endLatitude;
+    }
+
+    public void setEndLatitude(double endLatitude) {
+        this.endLatitude = endLatitude;
+    }
+
+    public double getEndLongitude() {
+        return endLongitude;
+    }
+
+    public void setEndLongitude(double endLongitude) {
+        this.endLongitude = endLongitude;
+    }
 
     public String getAccepted() {
         return accepted;
@@ -26,9 +43,11 @@ public class Order {
     private String feedback;
     private String id;
 
-    public Order(Customer customer,String id) {
+    public Order(Customer customer,String id,double endLatitude,double endLongitude) {
         this.customer = customer;
         this.id = id;
+        this.endLatitude = endLatitude;
+        this.endLongitude = endLongitude;
     }
 
     public Order() {

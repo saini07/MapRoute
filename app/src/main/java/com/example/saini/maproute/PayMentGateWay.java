@@ -66,6 +66,7 @@ public class PayMentGateWay extends Activity {
 
 
     static String getFirstName, getNumber, getEmailAddress, getRechargeAmt;
+    static double end_lat,end_long;
 
 
     ProgressDialog pDialog ;
@@ -88,7 +89,8 @@ public class PayMentGateWay extends Activity {
         getNumber       = oIntent.getExtras().getString("PHONE_NUMBER");
         getEmailAddress = oIntent.getExtras().getString("EMAIL_ADDRESS");
         getRechargeAmt  = oIntent.getExtras().getString("RECHARGE_AMT");
-
+        end_lat = oIntent.getExtras().getDouble("end_lat");
+        end_long = oIntent.getExtras().getDouble("end_long");
 
 
         //post_val = getIntent().getStringArrayListExtra("post_val");
@@ -318,7 +320,7 @@ public class PayMentGateWay extends Activity {
 	                    finish();*/
                     // new PostRechargeData().execute();
                     String ide= databaseOrder.push().getKey();
-                    Order order = new Order(MapsActivity.customer,ide);
+                    Order order = new Order(MapsActivity.customer,ide,end_lat,end_long);
                     databaseOrder.child(ide).setValue(order);
 
                     Intent intent=new Intent(PayMentGateWay.this,MapsActivity.class);
